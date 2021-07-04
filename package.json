@@ -22,16 +22,16 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^7.6.15",
+    "@nestjs/common": "^7.6.18",
     "@nestjs/config": "^0.6.3",
-    "@nestjs/core": "^7.6.15",
-    "@nestjs/platform-express": "^7.6.15",
+    "@nestjs/core": "^7.6.18",
+    "@nestjs/platform-express": "^7.6.18",
     "@types/morgan": "^1.9.2",
     "morgan": "^1.10.0",
     "nest-morgan": "^2.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.6.6"
+    "rxjs": "^6.6.7"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",
