@@ -10,7 +10,7 @@
 
 </br>
 
-[그림]
+![오무렌아키텍쳐](https://user-images.githubusercontent.com/62228195/124713845-03388680-df3c-11eb-9b5c-d30cfec93d31.PNG)
 
 </br>
 
@@ -18,7 +18,25 @@
 
 </br>
 
-[그림]
+```typescript
+  "dependencies": {
+    "@nestjs/common": "^7.6.18",
+    "@nestjs/config": "^0.6.3",
+    "@nestjs/core": "^7.6.18",
+    "@nestjs/mapped-types": "*",
+    "@nestjs/platform-express": "^7.6.18",
+    "@nestjs/typeorm": "^7.1.5",
+    "@types/morgan": "^1.9.2",
+    "mongodb": "^3.6.9",
+    "morgan": "^1.10.0",
+    "nest-morgan": "^2.0.0",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
+    "rxjs": "^6.6.7",
+    "typeorm": "^0.2.34",
+    "typeorm-seeding": "^1.6.1"
+  }
+  ```
 
 </br>
 
