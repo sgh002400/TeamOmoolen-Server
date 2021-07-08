@@ -6,7 +6,7 @@ import {
   ObjectID,
   ObjectIdColumn,
 } from 'typeorm';
-import { User } from './User';
+import { Users } from './Users';
 
 @Entity()
 export class Product {
@@ -55,17 +55,17 @@ export class Product {
   @Column((type) => Product)
   suggestList: Product[];
 
-  @ManyToMany(() => User, (user) => user.favoriteList)
-  @JoinTable({
-    name: 'favorite',
-    joinColumn: {
-      name: 'ProductId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'UserId',
-      referencedColumnName: 'id',
-    },
-  })
-  favoriteUserList: User[];
+  // @ManyToMany(() => Users, (user) => user.favoriteList)
+  // @JoinTable({
+  //   name: 'favorite',
+  //   joinColumn: {
+  //     name: 'ProductId',
+  //     referencedColumnName: 'id',
+  //   },
+  //   inverseJoinColumn: {
+  //     name: 'UserId',
+  //     referencedColumnName: 'id',
+  //   },
+  // })
+  // favoriteUserList: Users[];
 }

@@ -9,7 +9,7 @@ import {
   ObjectIdColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from './User';
+import { Users } from './Users';
 
 @Entity()
 export class Tip {
@@ -34,17 +34,17 @@ export class Tip {
   @DeleteDateColumn()
   deleteAt: Date;
 
-  @ManyToMany(() => User, (user) => user.scrapTipList)
-  @JoinTable({
-    name: 'ScrapTip',
-    joinColumn: {
-      name: 'TipId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'UserId',
-      referencedColumnName: 'id',
-    },
-  })
-  scrapUserList: User[];
+  // @ManyToMany(() => Users, (user) => user.scrapTipList)
+  // @JoinTable({
+  //   name: 'ScrapTip',
+  //   joinColumn: {
+  //     name: 'TipId',
+  //     referencedColumnName: 'id',
+  //   },
+  //   inverseJoinColumn: {
+  //     name: 'UserId',
+  //     referencedColumnName: 'id',
+  //   },
+  // })
+  // scrapUserList: Users[];
 }
