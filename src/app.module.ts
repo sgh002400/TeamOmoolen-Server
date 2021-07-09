@@ -16,17 +16,27 @@ import { ProductsModule } from './products/products.module';
 import { EventsModule } from './events/events.module';
 import { TipsModule } from './tips/tips.module';
 import { GuidesModule } from './guides/guides.module';
+import { UsersService } from './users/users.service';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     MorganModule,
     TypeOrmModule.forFeature([Users, Tips, Products, Guides, Events]),
-    TypeOrmModule.forRoot({
+    TypeOrmModule.forRoot({      
       type: 'mongodb',
       url: process.env.DB_URL,
       database: process.env.DB_DATABASE,
-      entities: [],
+      entities: [
+        Events,
+        Guides,
+        Products,
+        Users,
+        Tips,
+      ],
       autoLoadEntities: true,
       ssl: true,
       useUnifiedTopology: true,
@@ -46,7 +56,7 @@ import { GuidesModule } from './guides/guides.module';
       provide: APP_INTERCEPTOR,
       useClass: MorganInterceptor('combined'),
     },
-    AppService,
+    AppService, UsersService, AuthService
   ],
 })
 export class AppModule {}
