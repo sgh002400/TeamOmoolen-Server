@@ -28,9 +28,9 @@ export class AuthService {
       userId,
     };
 
-    const token = jsonwebtoken.sign(
+    const token: string = jsonwebtoken.sign(
       payload,
-      process.env.PASSWORD_SECRET,
+      process.env.JWT_SECRET,
       signOptions,
     );
     return token;
