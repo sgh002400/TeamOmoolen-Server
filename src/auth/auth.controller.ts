@@ -29,21 +29,21 @@ export class AuthController {
   /**
    * APPLE LOGIN CALL BACK 함수
    * 클라이언트에서 [POST]'https://ommolen.loca.lt/auth/apple' 요청.
-   * req.body 안에 idToken, familyName, givenName 담겨서 온다.
+   * req.body 안에 oauthKey, familyName, givenName  담겨서 온다.
    */
   @Post('apple')
   async appleLogin(@Req() req, @Res() res) {
     try {
+      const oauthKey = req.body.oauthKey;
+
       let userName = '오무렌';
-      if (req.body.familyName) {
+      if (req.body.givenName) {
         userName = req.body.familyName + req.body.givenName;
       }
 
-      const userEmail = req.body.email;
-
       const user = await this.authService.findOrCreateUser({
         userName,
-        userEmail,
+        oauthKey,
       });
       const accessToken = this.authService.makeAccessToken(user.id);
 

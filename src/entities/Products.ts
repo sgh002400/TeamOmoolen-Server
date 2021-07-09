@@ -9,7 +9,7 @@ import {
 import { Users } from './Users';
 
 @Entity()
-export class Product {
+export class Products {
   @ObjectIdColumn()
   id: ObjectID;
 
@@ -52,8 +52,8 @@ export class Product {
   @Column()
   visionMaximum: number;
 
-  @Column((type) => Product)
-  suggestList: Product[];
+  // @Column((type) => Product)
+  // suggestList: Product[];
 
   // @ManyToMany(() => Users, (user) => user.favoriteList)
   // @JoinTable({
