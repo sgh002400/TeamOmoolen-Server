@@ -3,13 +3,16 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ObjectID,
   ObjectIdColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Users } from './Users';
 
 @Entity()
-export class Event {
+export class Tips {
   @ObjectIdColumn()
   id: ObjectID;
 
@@ -30,4 +33,18 @@ export class Event {
 
   @DeleteDateColumn()
   deleteAt: Date;
+
+  @ManyToMany(() => Users, (user) => user.scrapTipList)
+  @JoinTable({
+    name: 'ScrapTip',
+    joinColumn: {
+      name: 'TipId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'UserId',
+      referencedColumnName: 'id',
+    },
+  })
+  scrapUserList: Users[];
 }
