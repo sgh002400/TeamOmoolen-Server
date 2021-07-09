@@ -1,7 +1,6 @@
 import { Column, Entity, ManyToMany, ObjectID, ObjectIdColumn } from 'typeorm';
 import { WantedLens } from './embedded/WantedLens';
 import { SuitedLens } from './embedded/SuitedLens';
-import { Product } from './Product';
 import { Guide } from './Guide';
 import { Tip } from './Tip';
 
@@ -11,10 +10,10 @@ export class Users {
   id: ObjectID;
 
   @Column()
-  name: string;
+  oauthKey: string;
 
   @Column()
-  email: string;
+  name: string;
 
   @Column()
   gender: string;
