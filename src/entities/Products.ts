@@ -23,7 +23,7 @@ export class Products {
   category: string;
 
   @Column()
-  color: string;
+  colorList: number[];
 
   @Column()
   price: number;
@@ -44,7 +44,10 @@ export class Products {
   pieces: number; // 개수
 
   @Column()
-  astigmatismPossible: boolean;
+  function: string;
+
+  @Column()
+  material: string;
 
   @Column()
   visionMinimum: number;
@@ -52,8 +55,11 @@ export class Products {
   @Column()
   visionMaximum: number;
 
-  // @Column((type) => Product)
-  // suggestList: Product[];
+  @ManyToMany(() => Products)
+  suggestList: Products[];
+
+  @Column()
+  searchCount: number;
 
   // @ManyToMany(() => Users, (user) => user.favoriteList)
   // @JoinTable({
