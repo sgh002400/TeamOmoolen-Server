@@ -23,7 +23,7 @@ export class Products {
   category: string; //컬러인지 투명인지 코스프레인지
 
   @Column()
-  color: string;
+  color: number;
 
   @Column()
   otherColorList: Array<string>;
@@ -59,8 +59,8 @@ export class Products {
   searchCount: number;
 
 
-  @Column((type) => Products)
-  suggestList: Products[];
+  // @Column((type) => Products)
+  // suggestList: Products[];
 
   @ManyToMany(() => Users, (user) => user.favoriteList)
   @JoinTable({

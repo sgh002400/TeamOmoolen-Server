@@ -1,21 +1,14 @@
+import { SuitedLensDto } from "./suitedLens.dto";
+import { WantedLensDto } from "./wantedLens.dto";
+
 export class saveOnBoardingDataDto {
 
   public gender: string;
 
   public age: number;
 
-  public category: string;
+  public wantedLens: WantedLensDto;
 
-  public color: Array<number>;
-
-  public function: Array<string>;
-
-  public changeCycle: Array<number>;
-
-  public brand: string;
-
-  public lensName: string;
-
-  public wearTime: string;
+  public suitedLens: SuitedLensDto;
 
 }

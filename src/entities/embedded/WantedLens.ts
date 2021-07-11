@@ -12,4 +12,7 @@ export class WantedLens {
 
   @Column()
   changeCycle: Array<number>;
+
+  @Column()
+  brand: string;
 }

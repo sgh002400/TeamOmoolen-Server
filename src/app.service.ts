@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThan, LessThanOrEqual, Like, MoreThanOrEqual, ObjectID, Repository, In } from 'typeorm';
 import { FilterConditionDto } from './dto/filter.condition.dto';
+import { HomeValueDto } from './dto/home.value.dto';
 import { saveOnBoardingDataDto } from './dto/save.onboarding.data.dto';
 import { SearchQueryStringDto } from './dto/search.querystring.dto';
+import { SuitedLensDto } from './dto/suitedLens.dto';
+import { WantedLensDto } from './dto/wantedLens.dto';
+import { SuitedLens } from './entities/embedded/SuitedLens';
 import { Events } from './entities/Events';
 import { Guides } from './entities/Guides';
 import { Products } from './entities/Products';
@@ -36,56 +40,65 @@ export class AppService {
   findRecommendationByUser
   */
 
-  async saveOnBoardingData(body: saveOnBoardingDataDto, id: number) {
+  async saveOnBoardingData(body: saveOnBoardingDataDto, id: ObjectID) {
     //토큰까서 user 찾아내기
-    const user = await this.usersRepository.findOne({
-      where: {
-        id: id
-      }
-    })
+    const user = await this.findUser(id)
 
     user.age = body.age;
     user.gender = body.gender;
-    user.wantedLens.category = body.category;
-    user.wantedLens.color = body.color;
-    user.wantedLens.function = body.function;
-    user.wantedLens.changeCycle = body.changeCycle;
-    user.suitedLens.brand = body.brand;
-    user.suitedLens.name = body.lensName;
-    user.suitedLens.wearTime = body.wearTime;
+
+    const wantedLens = new WantedLensDto();
+    wantedLens.category = body.wantedLens.category;
+    wantedLens.color = body.wantedLens.color;
+    wantedLens.function = body.wantedLens.function;
+    wantedLens.changeCycle = body.wantedLens.changeCycle;
+    wantedLens.brand = body.wantedLens.brand;
+
+    const suitedLens = new SuitedLensDto();
+    suitedLens.lensName = body.suitedLens.lensName;
+    suitedLens.wearTime = body.suitedLens.wearTime;
+
+    user.wantedLens = wantedLens;
+    user.suitedLens = suitedLens;
 
     await this.usersRepository.save(user);
 
   }
 
-  async findHomeData(id: number) {
+  async findHomeData(id: ObjectID) {
     //토큰 정보에서 user 정보 찾아야 될 듯
 
-    const user = this.findUser(id);
-    const userName = (await user).name;
+    const user = await this.findUser(id);
+    console.log(user);
+    const userName = user.name;
     const season = "여름";
+    const wearTime = user.suitedLens.wearTime;
 
-    if(this.OnboardingComplete(await user)) {
-      const recommendationByUser = this.findRecommendationByUser(await user);
-      const guides = this.findGuide();
-      const recommendationBySeason = this.findRecommendationBySeason(season);
-      const deadlineEvent = this.findDeadlineEvents();
-      const newLens = this.findNewLens();
-      const recommendationBySituation = this.findRecommendationBySituation(await user);
-      const lastestEvent = this.findLastestEvent()
+    if(this.OnboardingComplete(user)) {
+      const recommendationByUser = await this.findRecommendationByUser(user);
+      const guides = await this.findGuide();
+      const recommendationBySeason = await this.findRecommendationBySeason(season);
+      const deadlineEvent = await this.findDeadlineEvents();
+      const newLens = await this.findNewLens();
+      const recommendationBySituation = await this.findRecommendationBySituation(user);
+      const lastestEvent = await this.findLatestEvent()
       
-      const homeValues = {
-        userName,
-        recommendationByUser,
-        guides,
-        recommendationBySeason,
-        deadlineEvent,
-        newLens,
-        recommendationBySituation,
-        lastestEvent
-      }
+      const homeValues = new HomeValueDto()
       
-      return homeValues; //형식 맞는지 확인 -> log 찍어보기
+      homeValues.username = userName;
+      homeValues.recommendationByUser = recommendationByUser;
+      homeValues.guides = guides;
+      homeValues.season = season;
+      homeValues.recommendationBySeason = recommendationBySeason;
+      homeValues.deadlineEvent = deadlineEvent;
+      //homeValues.newLens = newLens;
+      homeValues.situation = wearTime;
+      homeValues.recommendationBySituation = recommendationBySituation;
+      homeValues.lastestEvent = lastestEvent;
+      
+      
+      
+      return homeValues;
 
     } else {
       //온보딩을 안하는 경우 보류!
@@ -100,9 +113,9 @@ export class AppService {
     }
   }
 
-  async findUser(id: number)  {
+  async findUser(id: ObjectID)  {
     return this.usersRepository.findOne({
-      where: { id: id }
+      where: { _id: id }
     });
   }
 
@@ -115,6 +128,7 @@ export class AppService {
           changeCycle: In(user.wantedLens.changeCycle)
         }
       },
+      select: [ "id", "name", "imageList", "category", "color", "otherColorList", "price", "brand", "releaseDate", "diameter", "changeCycle", "pieces" ],
       take: 6
     });
   }
@@ -180,21 +194,21 @@ export class AppService {
     const date = today.getDate();
     const dueDate = `${year}-${month}-${date}`
 
-    const newLensBrand1 = this.productsRepository.find({
+    const newLensBrand1 = await this.productsRepository.find({
       where : {
         brand: "오렌즈",
-        releaseDate: MoreThanOrEqual(dueDate) //morethanequal 되는지가 의문!
+        releaseDate: MoreThanOrEqual(dueDate) //findPopularProductList 참고
       }
     });
 
-    const newLensBrand2 = this.productsRepository.find({
+    const newLensBrand2 = await this.productsRepository.find({
       where : {
         brand: "렌즈미",
         releaseDate: MoreThanOrEqual(dueDate)
       }
     });
     
-    const newLensBrand3 = this.productsRepository.find({
+    const newLensBrand3 = await this.productsRepository.find({
       where: {
         brand: "렌즈베리",
         releaseDate: MoreThanOrEqual(dueDate)
@@ -248,7 +262,7 @@ export class AppService {
     }
   }
 
-  async findLastestEvent() {
+  async findLatestEvent() {
 
     return this.eventsRepository.find({
       order: {
