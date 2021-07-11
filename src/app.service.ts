@@ -27,90 +27,90 @@ export class AppService {
   constructor(
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
-  
+
     @InjectRepository(Tips)
     private tipsRepository: Repository<Tips>,
-  
+
     @InjectRepository(Products)
     private productsRepository: Repository<Products>,
-  
+
     @InjectRepository(Guides)
     private guidesRepository: Repository<Guides>,
-  
+
     @InjectRepository(Events)
     private eventsRepository: Repository<Events>,
-  ) {}
-  
+  ) { }
+
   /*
   컬러값 16진수로 바꾸기
   take했을 때 항상 똑같은 결과 나오지 않나 체크
   상세보기 눌렀을 때 인기 count 증가
   findRecommendationByUser
   */
-  
+
   async saveOnBoardingData(body: saveOnBoardingDataDto, id: ObjectID) {
     //토큰까서 user 찾아내기
     const user = await this.findUserById(id);
-  
+
     user.age = body.age;
     user.gender = body.gender;
-  
+
     const wantedLens = new WantedLensDto();
     wantedLens.category = body.wantedLens.category;
     wantedLens.color = body.wantedLens.color;
     wantedLens.function = body.wantedLens.function;
     wantedLens.changeCycle = body.wantedLens.changeCycle;
     wantedLens.brand = body.wantedLens.brand;
-  
+
     const suitedLens = new SuitedLensDto();
     suitedLens.lensName = body.suitedLens.lensName;
     suitedLens.wearTime = body.suitedLens.wearTime;
-  
+
     user.wantedLens = wantedLens;
     user.suitedLens = suitedLens;
-  
+
     await this.usersRepository.save(user);
   }
-  
+
   async findHomeData(id: ObjectID) {
     //토큰 정보에서 user 정보 찾아야 될 듯
-  
+
     const user = await this.findUserById(id);
-    console.log(user);
     const userName = user.name;
-    const season = '여름';
+    const season = 'spring';
     const wearTime = user.suitedLens.wearTime;
-  
+
     if (this.OnboardingComplete(user)) {
       const recommendationByUser = await this.findRecommendationByUserOnBoardingData(user);
       const guides = await this.findGuide();
-      const recommendationBySeason = await this.findRecommendationBySeason(
-        season,
-      );
+      const recommendationBySeason = await this.findRecommendationBySeason(season);
       const deadlineEvent = await this.findDeadlineEvents();
       const newLens = await this.findNewLens();
-      const recommendationBySituation =
-        await this.findRecommendationBySituation(user);
+      const recommendationBySituation = await this.findRecommendationBySituationOnBoardingData(user);
       const lastestEvent = await this.findLatestEvent();
-  
+
       const homeValues = new HomeValueDto();
-  
+
       homeValues.username = userName;
       homeValues.recommendationByUser = recommendationByUser;
       homeValues.guides = guides;
       homeValues.season = season;
       homeValues.recommendationBySeason = recommendationBySeason;
+      console.log(recommendationBySeason);
+
       homeValues.deadlineEvent = deadlineEvent;
       //homeValues.newLens = newLens;
       homeValues.situation = wearTime;
       homeValues.recommendationBySituation = recommendationBySituation;
       homeValues.lastestEvent = lastestEvent;
+
       return homeValues;
+
     } else {
       //온보딩을 안하는 경우 보류!
     }
   }
-  
+
   /* 매번 바뀌는지 확인해보기 */
   async OnboardingComplete(user: Users) {
     if (
@@ -123,21 +123,19 @@ export class AppService {
       return true;
     }
   }
-  
+
   async findUserById(id: ObjectID) {
     return this.usersRepository.findOne({
       where: { _id: id },
     });
   }
-  
+
   async findRecommendationByUserOnBoardingData(user: Users) {
     return this.productsRepository.find({
       where: {
-        wantedLens: {
-          color: In(user.wantedLens.color),
-          function: In(user.wantedLens.function),
-          changeCycle: In(user.wantedLens.changeCycle),
-        },
+        color: In([111111, 111112]),
+        function: In(["근시", "다초점"]),
+        changeCycle: In([0, 1])
       },
       select: [
         'id',
@@ -156,7 +154,7 @@ export class AppService {
       take: 6,
     });
   }
-  
+
   async findGuide() {
     return this.guidesRepository.find({
       order: {
@@ -165,41 +163,97 @@ export class AppService {
       take: 9,
     });
   }
-  
+
   async findRecommendationBySeason(season: string) {
-    if (season == '봄') {
+    if (season == 'spring') {
       return this.productsRepository.find({
         where: {
-          color: '골드',
+          color: "gold", 
         },
+        select: [
+          'id',
+          'name',
+          'imageList',
+          'category',
+          'color',
+          'otherColorList',
+          'price',
+          'brand',
+          'releaseDate',
+          'diameter',
+          'changeCycle',
+          'pieces',
+        ],
         take: 6,
       });
-    } else if (season == '여름') {
+    } else if (season == 'summer') {
       return this.productsRepository.find({
         where: {
-          color: '그린',
+          color: "green",
         },
+        select: [
+          'id',
+          'name',
+          'imageList',
+          'category',
+          'color',
+          'otherColorList',
+          'price',
+          'brand',
+          'releaseDate',
+          'diameter',
+          'changeCycle',
+          'pieces',
+        ],
         take: 6,
       });
-    } else if (season == '가을') {
+    } else if (season == 'autumn') {
       return this.productsRepository.find({
         where: {
-          color: '브라운',
+          color: "brown",
         },
+        select: [
+          'id',
+          'name',
+          'imageList',
+          'category',
+          'color',
+          'otherColorList',
+          'price',
+          'brand',
+          'releaseDate',
+          'diameter',
+          'changeCycle',
+          'pieces',
+        ],
         take: 6,
       });
-    } else if (season == '겨울') {
+    } else if (season == 'winter') {
       return this.productsRepository.find({
         where: {
-          color: '블루',
+          color: "blue",
         },
+        select: [
+          'id',
+          'name',
+          'imageList',
+          'category',
+          'color',
+          'otherColorList',
+          'price',
+          'brand',
+          'releaseDate',
+          'diameter',
+          'changeCycle',
+          'pieces',
+        ],
         take: 6,
       });
     } else {
       console.log('잘못된 계절입니다.');
     }
   }
-  
+
   async findDeadlineEvents() {
     return this.eventsRepository.find({
       order: {
@@ -208,43 +262,43 @@ export class AppService {
       take: 3,
     });
   }
-  
+
   async findNewLens() {
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth() - 3;
     const date = today.getDate();
     const dueDate = `${year}-${month}-${date}`;
-  
+
     const newLensBrand1 = await this.productsRepository.find({
       where: {
         brand: '오렌즈',
         releaseDate: MoreThanOrEqual(dueDate), //findPopularProductList 참고
       },
     });
-  
+
     const newLensBrand2 = await this.productsRepository.find({
       where: {
         brand: '렌즈미',
         releaseDate: MoreThanOrEqual(dueDate),
       },
     });
-  
+
     const newLensBrand3 = await this.productsRepository.find({
       where: {
         brand: '렌즈베리',
         releaseDate: MoreThanOrEqual(dueDate),
       },
     });
-  
+
     return {
       newLensBrand1,
       newLensBrand2,
       newLensBrand3,
     };
   }
-  
-  async findRecommendationBySituation(user: Users) {
+
+  async findRecommendationBySituationOnBoardingData(user: Users) {
     if (user.suitedLens.wearTime == '일상생활') {
       return this.productsRepository.find({
         where: [
@@ -282,7 +336,7 @@ export class AppService {
       console.log('잘못된 상황입니다.');
     }
   }
-  
+
   async findLatestEvent() {
     return this.eventsRepository.find({
       order: {
@@ -291,10 +345,10 @@ export class AppService {
       take: 3,
     });
   }
-  
+
   async getSearchProduct(query: SearchQueryStringDto) {
     const keyword = query.keyword;
-  
+
     return this.productsRepository.find({
       where: {
         name: Like(`${keyword}%`),
@@ -302,7 +356,7 @@ export class AppService {
       take: 10,
     });
   }
-  
+
   async getFilteredList(body: FilterConditionDto) {
     return this.productsRepository.find({
       where: {
@@ -314,7 +368,7 @@ export class AppService {
       take: 9, //아마 무한 로딩인지 뭐시기 적용해야 될듯
     });
   }
-  
+
   async findPopularItem() {
     return this.productsRepository.find({
       order: {
