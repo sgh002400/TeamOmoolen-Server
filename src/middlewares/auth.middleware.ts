@@ -6,12 +6,12 @@ export default class AuthGuard implements CanActivate {
   public canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
 
-    const { access_token } = request.headers;
+    const { accesstoken } = request.headers;
 
-    if (access_token === undefined) {
+    if (accesstoken === undefined) {
       throw new HttpException('토큰이 전송되지 않았습니다.', 401);
     }
-    request.user = this.validateToken(access_token);
+    request.user = this.validateToken(accesstoken);
     return true;
   }
 
