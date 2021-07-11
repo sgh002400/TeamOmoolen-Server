@@ -1,7 +1,5 @@
 import { Injectable, ForbiddenException, Inject } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectID, Repository } from 'typeorm';
-import { Users } from '../entities/Users';
 import { UsersService } from '../users/users.service';
 import jsonwebtoken, { SignOptions } from 'jsonwebtoken';
 

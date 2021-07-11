@@ -25,7 +25,8 @@ export class ProductsController {
     response.changeCycle = findProduct.changeCycle;
     response.material = findProduct.material;
     response.function = findProduct.function;
-    response.colorList = findProduct.colorList;
+    response.color = findProduct.color;
+    response.otherColorList = findProduct.otherColorList;
     response.suggestList = findProduct.suggestList;
     response.popularList = popularProductList;
 

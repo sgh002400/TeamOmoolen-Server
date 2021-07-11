@@ -1,7 +1,6 @@
 import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class ProductDetailResponseDto {
-
   public imageURL;
   public brand;
   public name;
@@ -10,7 +9,8 @@ export class ProductDetailResponseDto {
   public changeCycle;
   public material;
   public function;
-  public colorList;
+  public color;
+  public otherColorList;
   public suggestList;
   public popularList;
 }

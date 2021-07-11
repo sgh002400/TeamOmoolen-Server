@@ -77,4 +77,4 @@ export class Products {
   //   },
   // })
   // favoriteUserList: Users[];
-
+}

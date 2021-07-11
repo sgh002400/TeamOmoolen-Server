@@ -12,17 +12,17 @@ export class UsersService {
     private usersRepository: Repository<Users>,
   ) {}
 
-  async createUser(userName: string, userEmail: string) {
+  async createUser(userName: string, oauthKey: string) {
     const newUser = new Users();
     newUser.name = userName;
-    newUser.email = userEmail;
+    newUser.oauthKey = oauthKey;
 
     return await this.usersRepository.save(newUser);
   }
 
-  async findByEmail(userEmail: string) {
+  async findByOauthKey(oauthKey: string) {
     return this.usersRepository.findOne({
-      where: { email: userEmail },
+      where: { oauthKey: oauthKey },
     });
   }
 }

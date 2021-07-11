@@ -34,17 +34,17 @@ export class Tips {
   @DeleteDateColumn()
   deleteAt: Date;
 
-  @ManyToMany(() => Users, (user) => user.scrapTipList)
-  @JoinTable({
-    name: 'ScrapTip',
-    joinColumn: {
-      name: 'TipId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'UserId',
-      referencedColumnName: 'id',
-    },
-  })
-  scrapUserList: Users[];
+  // @ManyToMany(() => Users, (user) => user.scrapTipList)
+  // @JoinTable({
+  //   name: 'ScrapTip',
+  //   joinColumn: {
+  //     name: 'TipId',
+  //     referencedColumnName: 'id',
+  //   },
+  //   inverseJoinColumn: {
+  //     name: 'UserId',
+  //     referencedColumnName: 'id',
+  //   },
+  // })
+  // scrapUserList: Users[];
 }
