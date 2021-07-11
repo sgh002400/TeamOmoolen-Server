@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  LessThan,
-  LessThanOrEqual,
   Like,
-  MoreThanOrEqual,
   ObjectID,
   Repository,
-  In,
 } from 'typeorm';
 import { FilterConditionDto } from './common/dto/filter.condition.dto';
 import { HomeValueDto } from './common/dto/home.value.dto';
@@ -15,7 +11,6 @@ import { saveOnBoardingDataDto } from './common/dto/save.onboarding.data.dto';
 import { SearchQueryStringDto } from './common/dto/search.querystring.dto';
 import { SuitedLensDto } from './common/dto/suitedLens.dto';
 import { WantedLensDto } from './common/dto/wantedLens.dto';
-import { SuitedLens } from './entities/embedded/SuitedLens';
 import { Events } from './entities/Events';
 import { Guides } from './entities/Guides';
 import { Products } from './entities/Products';
@@ -63,8 +58,8 @@ export class AppService {
     wantedLens.brand = body.wantedLens.brand;
 
     const suitedLens = new SuitedLensDto();
-    suitedLens.lensName = body.suitedLens.lensName;
-    suitedLens.wearTime = body.suitedLens.wearTime;
+    suitedLens.brand = body.suitedLens.brand;
+    suitedLens.name = body.suitedLens.name;
 
     user.wantedLens = wantedLens;
     user.suitedLens = suitedLens;
@@ -78,7 +73,7 @@ export class AppService {
     const user = await this.findUserById(id);
     const userName = user.name;
     const season = 'spring';
-    const wearTime = user.suitedLens.wearTime;
+    const wearTime = user.wearTime;
 
     if (this.OnboardingComplete(user)) {
       const recommendationByUser = await this.findRecommendationByUserOnBoardingData(user);
@@ -96,10 +91,8 @@ export class AppService {
       homeValues.guides = guides;
       homeValues.season = season;
       homeValues.recommendationBySeason = recommendationBySeason;
-      console.log(recommendationBySeason);
-
       homeValues.deadlineEvent = deadlineEvent;
-      //homeValues.newLens = newLens;
+      homeValues.newLens = newLens;
       homeValues.situation = wearTime;
       homeValues.recommendationBySituation = recommendationBySituation;
       homeValues.lastestEvent = lastestEvent;
@@ -112,6 +105,7 @@ export class AppService {
   }
 
   /* 매번 바뀌는지 확인해보기 */
+
   async OnboardingComplete(user: Users) {
     if (
       user.gender != null &&
@@ -125,17 +119,17 @@ export class AppService {
   }
 
   async findUserById(id: ObjectID) {
-    return this.usersRepository.findOne({
+    return await this.usersRepository.findOne({
       where: { _id: id },
     });
   }
 
   async findRecommendationByUserOnBoardingData(user: Users) {
-    return this.productsRepository.find({
+    return await this.productsRepository.find({
       where: {
-        color: In([111111, 111112]),
-        function: In(["근시", "다초점"]),
-        changeCycle: In([0, 1])
+        color: { $in: user.wantedLens.color }, //gold, green
+        function: user.wantedLens.function, // 난시
+        changeCycle: user.wantedLens.changeCycle //0
       },
       select: [
         'id',
@@ -150,23 +144,24 @@ export class AppService {
         'diameter',
         'changeCycle',
         'pieces',
+        'function'
       ],
       take: 6,
     });
   }
 
   async findGuide() {
-    return this.guidesRepository.find({
+    return await this.guidesRepository.find({
       order: {
         createAt: 'DESC',
       },
-      take: 9,
+      take: 6,
     });
   }
 
   async findRecommendationBySeason(season: string) {
     if (season == 'spring') {
-      return this.productsRepository.find({
+      return await this.productsRepository.find({
         where: {
           color: "gold", 
         },
@@ -187,7 +182,7 @@ export class AppService {
         take: 6,
       });
     } else if (season == 'summer') {
-      return this.productsRepository.find({
+      return await this.productsRepository.find({
         where: {
           color: "green",
         },
@@ -257,79 +252,77 @@ export class AppService {
   async findDeadlineEvents() {
     return this.eventsRepository.find({
       order: {
-        endDate: 'DESC',
+        endDate: 'ASC',
       },
       take: 3,
     });
   }
 
   async findNewLens() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() - 3;
-    const date = today.getDate();
-    const dueDate = `${year}-${month}-${date}`;
+    
+    const now = new Date();
+    const threeMonthAgo = new Date(now.setMonth(now.getMonth() - 3));
 
     const newLensBrand1 = await this.productsRepository.find({
       where: {
         brand: '오렌즈',
-        releaseDate: MoreThanOrEqual(dueDate), //findPopularProductList 참고
+        releaseDate: { $gte: threeMonthAgo },
       },
     });
 
     const newLensBrand2 = await this.productsRepository.find({
       where: {
         brand: '렌즈미',
-        releaseDate: MoreThanOrEqual(dueDate),
+        releaseDate: { $gte: threeMonthAgo },
       },
     });
 
     const newLensBrand3 = await this.productsRepository.find({
       where: {
         brand: '렌즈베리',
-        releaseDate: MoreThanOrEqual(dueDate),
+        releaseDate: { $gte: threeMonthAgo },
       },
     });
 
-    return {
+    return await 
+    [
       newLensBrand1,
       newLensBrand2,
       newLensBrand3,
-    };
+    ];
   }
 
   async findRecommendationBySituationOnBoardingData(user: Users) {
-    if (user.suitedLens.wearTime == '일상생활') {
+    if (user.wearTime == '일상생활') {
       return this.productsRepository.find({
         where: [
-          { color: '브라운', diameter: LessThanOrEqual(13.4) },
-          { color: '초코', diameter: LessThanOrEqual(13.4) },
+          { color: 'brown', diameter: { $lte: 13.4 } },
+          { color: 'choco', diameter: { $lte: 13.4 } },
         ],
         take: 6,
       });
-    } else if (user.suitedLens.wearTime == '특별한 날') {
+    } else if (user.wearTime == '특별한 날') {
       return this.productsRepository.find({
         where: [
-          { color: '그레이', diameter: LessThanOrEqual(13.9) },
-          { color: '글리터', diameter: LessThanOrEqual(13.9) },
-          { color: '퍼플', diameter: LessThanOrEqual(13.9) },
-          { color: '핑크', diameter: LessThanOrEqual(13.9) },
-          { color: '블루', diameter: LessThanOrEqual(13.9) },
-          { color: '그린', diameter: LessThanOrEqual(13.9) },
+          { color: 'grey', diameter: { $lte: 13.9 } },
+          { color: 'purple', diameter: { $lte: 13.9 } },
+          { color: 'pink', diameter: { $lte: 13.9 } },
+          { color: 'blue', diameter: { $lte: 13.9 } },
+          { color: 'green', diameter: { $lte: 13.9 } },
         ],
         take: 6,
       });
-    } else if (user.suitedLens.wearTime == '운동') {
+    } else if (user.wearTime == '운동') {
       return this.productsRepository.find({
         where: {
-          color: '투명',
-          price: LessThan(20000),
+          color: 'clear',
+          price: { $lt: 20000 },
         },
       });
-    } else if (user.suitedLens.wearTime == '여행') {
+    } else if (user.wearTime == '여행') {
       return this.productsRepository.find({
         where: {
-          color: In(user.wantedLens.color),
+          color: { $in: user.wantedLens.color },
         },
       });
     } else {
@@ -360,12 +353,12 @@ export class AppService {
   async getFilteredList(body: FilterConditionDto) {
     return this.productsRepository.find({
       where: {
-        brand: In(body.brand),
-        color: In(body.color),
+        brand: { $in: body.brand },
+        color: { $in: body.color },
         diameter: body.diameter,
-        changeCycle: In(body.changeCycle),
+        changeCycle: { $in: body.changeCycle },
       },
-      take: 9, //아마 무한 로딩인지 뭐시기 적용해야 될듯
+      take: 12,
     });
   }
 
