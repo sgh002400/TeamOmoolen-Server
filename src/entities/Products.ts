@@ -23,10 +23,10 @@ export class Products {
   category: string;
 
   @Column()
-  color: number;
+  color: string;
 
   @Column()
-  otherColorList: Array<number>;
+  otherColorList: Array<string>;
 
   @Column()
   price: number;
