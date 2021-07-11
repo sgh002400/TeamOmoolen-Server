@@ -20,10 +20,13 @@ export class Products {
   imageList: string[];
 
   @Column()
-  category: string;
+  category: string; //컬러인지 투명인지 코스프레인지
 
   @Column()
-  color: string;
+  color: number;
+
+  @Column()
+  otherColorList: Array<string>;
 
   @Column()
   price: number;
@@ -44,7 +47,7 @@ export class Products {
   pieces: number; // 개수
 
   @Column()
-  astigmatismPossible: boolean;
+  function: string; // 기능 - 근시, 난시, 다초점, 없음
 
   @Column()
   visionMinimum: number;
@@ -52,20 +55,23 @@ export class Products {
   @Column()
   visionMaximum: number;
 
-  // @Column((type) => Product)
-  // suggestList: Product[];
+  @Column()
+  searchCount: number;
 
-  // @ManyToMany(() => Users, (user) => user.favoriteList)
-  // @JoinTable({
-  //   name: 'favorite',
-  //   joinColumn: {
-  //     name: 'ProductId',
-  //     referencedColumnName: 'id',
-  //   },
-  //   inverseJoinColumn: {
-  //     name: 'UserId',
-  //     referencedColumnName: 'id',
-  //   },
-  // })
-  // favoriteUserList: Users[];
+  // @Column((type) => Products)
+  // suggestList: Products[];
+
+  @ManyToMany(() => Users, (user) => user.favoriteList)
+  @JoinTable({
+    name: 'favorite',
+    joinColumn: {
+      name: 'ProductId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'UserId',
+      referencedColumnName: 'id',
+    },
+  })
+  favoriteUserList: Users[];
 }

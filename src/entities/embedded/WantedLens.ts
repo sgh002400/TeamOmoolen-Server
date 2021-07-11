@@ -5,11 +5,14 @@ export class WantedLens {
   category: string;
 
   @Column()
-  color: string;
+  color: Array<number>;
 
   @Column()
-  function: string;
+  function: Array<string>;
 
   @Column()
-  changeCycle: number;
+  changeCycle: Array<number>;
+
+  @Column()
+  brand: string;
 }

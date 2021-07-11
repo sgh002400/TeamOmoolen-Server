@@ -7,22 +7,36 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { Guide } from './entities/Guide';
-import { Tip } from './entities/Tip';
+import { Guides } from './entities/Guides';
+import { Tips } from './entities/Tips';
 import { Users } from './entities/Users';
-import { Product } from './entities/Product';
-import { Event } from './entities/Event';
+import { Products } from './entities/Products';
+import { Events } from './entities/Events';
+import { ProductsModule } from './products/products.module';
+import { EventsModule } from './events/events.module';
+import { TipsModule } from './tips/tips.module';
+import { GuidesModule } from './guides/guides.module';
+import { UsersService } from './users/users.service';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     MorganModule,
-    TypeOrmModule.forFeature(),
-    TypeOrmModule.forRoot({
+    TypeOrmModule.forFeature([Users, Tips, Products, Guides, Events]),
+    TypeOrmModule.forRoot({      
       type: 'mongodb',
       url: process.env.DB_URL,
       database: process.env.DB_DATABASE,
-      // entities: [],
+      entities: [
+        Events,
+        Guides,
+        Products,
+        Users,
+        Tips,
+      ],
       autoLoadEntities: true,
       ssl: true,
       useUnifiedTopology: true,
@@ -31,6 +45,10 @@ import { Event } from './entities/Event';
     }),
     UsersModule,
     AuthModule,
+    ProductsModule,
+    EventsModule,
+    TipsModule,
+    GuidesModule,
   ],
   controllers: [AppController],
   providers: [
@@ -38,7 +56,7 @@ import { Event } from './entities/Event';
       provide: APP_INTERCEPTOR,
       useClass: MorganInterceptor('combined'),
     },
-    AppService,
+    AppService, UsersService, AuthService
   ],
 })
 export class AppModule {}
