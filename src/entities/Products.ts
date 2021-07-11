@@ -23,7 +23,10 @@ export class Products {
   category: string;
 
   @Column()
-  colorList: number[];
+  color: number;
+
+  @Column()
+  otherColorList: Array<number>;
 
   @Column()
   price: number;
@@ -74,4 +77,4 @@ export class Products {
   //   },
   // })
   // favoriteUserList: Users[];
-}
+

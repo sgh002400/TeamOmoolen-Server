@@ -1,8 +1,17 @@
-import { Column, Entity, ManyToMany, ObjectID, ObjectIdColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ObjectID,
+  ObjectIdColumn,
+  OneToMany,
+} from 'typeorm';
 import { WantedLens } from './embedded/WantedLens';
 import { SuitedLens } from './embedded/SuitedLens';
-import { Guide } from './Guide';
-import { Tip } from './Tip';
+import { Products } from './Products';
+import { Guides } from './Guides';
+import { Tips } from './Tips';
+
 
 @Entity()
 export class Users {
@@ -27,12 +36,12 @@ export class Users {
   @Column((type) => SuitedLens)
   suitedLens: SuitedLens;
 
-  // @ManyToMany(() => Product, (product) => product.favoriteUserList)
-  // favoriteList: Product[];
+  @ManyToMany(() => Products, (product) => product.favoriteUserList)
+  favoriteList: Products[];
 
-  // @ManyToMany(() => Guide, (guide) => guide.scrapUserList)
-  // scrapGuideList: Guide[];
-  //
-  // @ManyToMany(() => Tip, (tip) => tip.scrapUserList)
-  // scrapTipList: Tip[];
+  @ManyToMany(() => Guides, (guide) => guide.scrapUserList)
+  scrapGuideList: Guides[];
+
+  @ManyToMany(() => Tips, (tip) => tip.scrapUserList)
+  scrapTipList: Tips[];
 }
