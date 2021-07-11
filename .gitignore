@@ -15,7 +15,7 @@ lerna-debug.log*
 
 # Tests
 /coverage
-/.nyc_output
+/.nyc_outputw
 
 # IDEs and editors
 /.idea
@@ -34,3 +34,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 .env
+/src/config

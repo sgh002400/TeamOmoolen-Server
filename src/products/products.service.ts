@@ -1,26 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { LessThan, MoreThan, MoreThanOrEqual } from 'typeorm';
+import { ObjectID, Repository } from 'typeorm';
+import { Products } from '../entities/Products';
 
 @Injectable()
 export class ProductsService {
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  constructor(
+    @InjectRepository(Products)
+    private productsRepository: Repository<Products>,
+  ) {}
+
+  async findProductById(id: ObjectID) {
+    return this.productsRepository.findOne({
+      where: { _id: id },
+    });
   }
 
-  findAll() {
-    return `This action returns all products`;
-  }
+  async findPopularProductList() {
+    const now = new Date();
+    const threeMonthAgo = new Date(now.setMonth(now.getMonth() - 3));
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
-  }
-
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+    return await this.productsRepository.find({
+      where: {
+        releaseDate: { $gte: threeMonthAgo },
+      },
+      order: {
+        releaseDate: 'DESC',
+        searchCount: 'DESC',
+      },
+      take: 6,
+    });
   }
 }

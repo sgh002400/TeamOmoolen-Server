@@ -58,7 +58,6 @@ export class Products {
   @Column()
   searchCount: number;
 
-
   // @Column((type) => Products)
   // suggestList: Products[];
 

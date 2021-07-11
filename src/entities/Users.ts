@@ -12,16 +12,17 @@ import { Products } from './Products';
 import { Guides } from './Guides';
 import { Tips } from './Tips';
 
+
 @Entity()
 export class Users {
   @ObjectIdColumn()
   id: ObjectID;
 
   @Column()
-  name: string;
+  oauthKey: string;
 
   @Column()
-  email: string;
+  name: string;
 
   @Column()
   gender: string;
