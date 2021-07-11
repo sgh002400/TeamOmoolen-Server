@@ -12,6 +12,12 @@ export class UsersService {
     private usersRepository: Repository<Users>,
   ) {}
 
+  async findUserById(id: ObjectID) {
+    return this.usersRepository.findOne({
+      where: { _id: id },
+    });
+  }
+
   async createUser(userName: string, oauthKey: string) {
     const newUser = new Users();
     newUser.name = userName;

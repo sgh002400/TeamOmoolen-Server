@@ -43,6 +43,7 @@
     "mongodb": "^3.6.9",
     "morgan": "^1.10.0",
     "nest-morgan": "^2.0.0",
+    "nestjs-paginate": "^1.1.4",
     "nestjs-typeorm-paginate": "^2.5.3",
     "passport": "^0.4.1",
     "passport-apple": "^2.0.1",
