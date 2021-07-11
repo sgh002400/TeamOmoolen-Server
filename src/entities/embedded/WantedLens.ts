@@ -2,16 +2,16 @@ import { Column } from 'typeorm';
 
 export class WantedLens {
   @Column()
-  category: string;
+  category: Array<string>;
 
   @Column()
-  color: Array<number>;
+  color: Array<string>;
 
   @Column()
-  function: Array<string>;
+  function: string;
 
   @Column()
-  changeCycle: Array<number>;
+  changeCycle: number;
 
   @Column()
   brand: string;
