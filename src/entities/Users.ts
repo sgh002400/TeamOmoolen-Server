@@ -36,7 +36,7 @@ export class Users {
   suitedLens: SuitedLens;
 
   // @ManyToMany(() => Products, (product) => product.favoriteUserList)
-  // favoriteList: Products[];
+  favoriteList: Products[];
   //
   // @ManyToMany(() => Guides, (guide) => guide.scrapUserList)
   // scrapGuideList: Guides[];
