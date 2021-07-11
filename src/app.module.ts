@@ -13,30 +13,19 @@ import { Users } from './entities/Users';
 import { Products } from './entities/Products';
 import { Events } from './entities/Events';
 import { ProductsModule } from './products/products.module';
-import { EventsModule } from './events/events.module';
-import { TipsModule } from './tips/tips.module';
-import { GuidesModule } from './guides/guides.module';
 import { UsersService } from './users/users.service';
 import { AuthService } from './auth/auth.service';
+import { SuggestModule } from './suggest/suggest.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot({}),
     MorganModule,
     TypeOrmModule.forFeature([Users, Tips, Products, Guides, Events]),
-    TypeOrmModule.forRoot({      
+    TypeOrmModule.forRoot({
       type: 'mongodb',
       url: process.env.DB_URL,
       database: process.env.DB_DATABASE,
-      entities: [
-        Events,
-        Guides,
-        Products,
-        Users,
-        Tips,
-      ],
       autoLoadEntities: true,
       ssl: true,
       useUnifiedTopology: true,
@@ -46,9 +35,7 @@ import { AuthService } from './auth/auth.service';
     UsersModule,
     AuthModule,
     ProductsModule,
-    EventsModule,
-    TipsModule,
-    GuidesModule,
+    SuggestModule,
   ],
   controllers: [AppController],
   providers: [
@@ -56,7 +43,9 @@ import { AuthService } from './auth/auth.service';
       provide: APP_INTERCEPTOR,
       useClass: MorganInterceptor('combined'),
     },
-    AppService, UsersService, AuthService
+    AppService,
+    UsersService,
+    AuthService,
   ],
 })
 export class AppModule {}

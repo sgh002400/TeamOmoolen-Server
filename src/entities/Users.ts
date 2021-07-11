@@ -12,7 +12,6 @@ import { Products } from './Products';
 import { Guides } from './Guides';
 import { Tips } from './Tips';
 
-
 @Entity()
 export class Users {
   @ObjectIdColumn()
@@ -36,12 +35,12 @@ export class Users {
   @Column((type) => SuitedLens)
   suitedLens: SuitedLens;
 
-  @ManyToMany(() => Products, (product) => product.favoriteUserList)
-  favoriteList: Products[];
-
-  @ManyToMany(() => Guides, (guide) => guide.scrapUserList)
-  scrapGuideList: Guides[];
-
-  @ManyToMany(() => Tips, (tip) => tip.scrapUserList)
-  scrapTipList: Tips[];
+  // @ManyToMany(() => Products, (product) => product.favoriteUserList)
+  // favoriteList: Products[];
+  //
+  // @ManyToMany(() => Guides, (guide) => guide.scrapUserList)
+  // scrapGuideList: Guides[];
+  //
+  // @ManyToMany(() => Tips, (tip) => tip.scrapUserList)
+  // scrapTipList: Tips[];
 }
