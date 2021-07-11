@@ -35,6 +35,9 @@ export class Users {
   @Column((type) => SuitedLens)
   suitedLens: SuitedLens;
 
+  @Column()
+  wearTime: string;
+
   // @ManyToMany(() => Products, (product) => product.favoriteUserList)
   // favoriteList: Products[];
   //
