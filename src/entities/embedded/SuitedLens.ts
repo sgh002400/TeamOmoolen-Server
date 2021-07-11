@@ -2,8 +2,8 @@ import { Column } from 'typeorm';
 
 export class SuitedLens {
   @Column()
-  lensName: string;
+  brand: string;
 
   @Column()
-  wearTime: string;
+  name: string;
 }
