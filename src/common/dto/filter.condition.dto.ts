@@ -2,7 +2,7 @@ export class FilterConditionDto {
   
   public brand: Array<string>;
 
-  public color: Array<number>;
+  public color: Array<string>;
 
   public diameter: string;
 

@@ -1,6 +1,7 @@
 import { Events } from "src/entities/Events";
 import { Guides } from "src/entities/Guides";
 import { Products } from "src/entities/Products";
+import { NewLensListDto } from "./newLens.list.dto";
 
 export class HomeValueDto {
 
@@ -16,7 +17,7 @@ export class HomeValueDto {
 
   public deadlineEvent: Array<Events>;
 
-  public newLens: Array<Array<Products>>;
+  public newLens: Array<Products[]>;
 
   public situation: string;
 

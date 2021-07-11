@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  LessThan,
-  LessThanOrEqual,
   Like,
-  MoreThanOrEqual,
   ObjectID,
   Repository,
-  In,
 } from 'typeorm';
 import { FilterConditionDto } from './common/dto/filter.condition.dto';
 import { HomeValueDto } from './common/dto/home.value.dto';
@@ -15,7 +11,6 @@ import { saveOnBoardingDataDto } from './common/dto/save.onboarding.data.dto';
 import { SearchQueryStringDto } from './common/dto/search.querystring.dto';
 import { SuitedLensDto } from './common/dto/suitedLens.dto';
 import { WantedLensDto } from './common/dto/wantedLens.dto';
-import { SuitedLens } from './entities/embedded/SuitedLens';
 import { Events } from './entities/Events';
 import { Guides } from './entities/Guides';
 import { Products } from './entities/Products';
@@ -27,91 +22,90 @@ export class AppService {
   constructor(
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
-  
+
     @InjectRepository(Tips)
     private tipsRepository: Repository<Tips>,
-  
+
     @InjectRepository(Products)
     private productsRepository: Repository<Products>,
-  
+
     @InjectRepository(Guides)
     private guidesRepository: Repository<Guides>,
-  
+
     @InjectRepository(Events)
     private eventsRepository: Repository<Events>,
-  ) {}
-  
+  ) { }
+
   /*
   컬러값 16진수로 바꾸기
   take했을 때 항상 똑같은 결과 나오지 않나 체크
   상세보기 눌렀을 때 인기 count 증가
   findRecommendationByUser
   */
-  
+
   async saveOnBoardingData(body: saveOnBoardingDataDto, id: ObjectID) {
     //토큰까서 user 찾아내기
     const user = await this.findUserById(id);
-  
+
     user.age = body.age;
     user.gender = body.gender;
-  
+
     const wantedLens = new WantedLensDto();
     wantedLens.category = body.wantedLens.category;
     wantedLens.color = body.wantedLens.color;
     wantedLens.function = body.wantedLens.function;
     wantedLens.changeCycle = body.wantedLens.changeCycle;
     wantedLens.brand = body.wantedLens.brand;
-  
+
     const suitedLens = new SuitedLensDto();
-    suitedLens.lensName = body.suitedLens.lensName;
-    suitedLens.wearTime = body.suitedLens.wearTime;
-  
+    suitedLens.brand = body.suitedLens.brand;
+    suitedLens.name = body.suitedLens.name;
+
     user.wantedLens = wantedLens;
     user.suitedLens = suitedLens;
-  
+
     await this.usersRepository.save(user);
   }
-  
+
   async findHomeData(id: ObjectID) {
     //토큰 정보에서 user 정보 찾아야 될 듯
-  
+
     const user = await this.findUserById(id);
-    console.log(user);
     const userName = user.name;
-    const season = '여름';
-    const wearTime = user.suitedLens.wearTime;
-  
+    const season = 'spring';
+    const wearTime = user.wearTime;
+
     if (this.OnboardingComplete(user)) {
       const recommendationByUser = await this.findRecommendationByUserOnBoardingData(user);
       const guides = await this.findGuide();
-      const recommendationBySeason = await this.findRecommendationBySeason(
-        season,
-      );
+      const recommendationBySeason = await this.findRecommendationBySeason(season);
       const deadlineEvent = await this.findDeadlineEvents();
       const newLens = await this.findNewLens();
-      const recommendationBySituation =
-        await this.findRecommendationBySituation(user);
+      const recommendationBySituation = await this.findRecommendationBySituationOnBoardingData(user);
       const lastestEvent = await this.findLatestEvent();
-  
+
       const homeValues = new HomeValueDto();
-  
+
       homeValues.username = userName;
       homeValues.recommendationByUser = recommendationByUser;
       homeValues.guides = guides;
       homeValues.season = season;
       homeValues.recommendationBySeason = recommendationBySeason;
       homeValues.deadlineEvent = deadlineEvent;
-      //homeValues.newLens = newLens;
+      homeValues.newLens = newLens;
       homeValues.situation = wearTime;
       homeValues.recommendationBySituation = recommendationBySituation;
       homeValues.lastestEvent = lastestEvent;
+
       return homeValues;
+
     } else {
       //온보딩을 안하는 경우 보류!
     }
   }
-  
+
   /* 매번 바뀌는지 확인해보기 */
+
   async OnboardingComplete(user: Users) {
     if (
       user.gender != null &&
@@ -123,21 +117,19 @@ export class AppService {
       return true;
     }
   }
-  
+
   async findUserById(id: ObjectID) {
-    return this.usersRepository.findOne({
+    return await this.usersRepository.findOne({
       where: { _id: id },
     });
   }
-  
+
   async findRecommendationByUserOnBoardingData(user: Users) {
-    return this.productsRepository.find({
+    return await this.productsRepository.find({
       where: {
-        wantedLens: {
-          color: In(user.wantedLens.color),
-          function: In(user.wantedLens.function),
-          changeCycle: In(user.wantedLens.changeCycle),
-        },
+        color: { $in: user.wantedLens.color }, //gold, green
+        function: user.wantedLens.function, // 난시
+        changeCycle: user.wantedLens.changeCycle //0
       },
       select: [
         'id',
@@ -152,137 +144,192 @@ export class AppService {
         'diameter',
         'changeCycle',
         'pieces',
+        'function'
       ],
       take: 6,
     });
   }
-  
+
   async findGuide() {
-    return this.guidesRepository.find({
+    return await this.guidesRepository.find({
       order: {
         createAt: 'DESC',
       },
-      take: 9,
+      take: 6,
     });
   }
-  
+
   async findRecommendationBySeason(season: string) {
-    if (season == '봄') {
-      return this.productsRepository.find({
+    if (season == 'spring') {
+      return await this.productsRepository.find({
         where: {
-          color: '골드',
+          color: "gold", 
         },
+        select: [
+          'id',
+          'name',
+          'imageList',
+          'category',
+          'color',
+          'otherColorList',
+          'price',
+          'brand',
+          'releaseDate',
+          'diameter',
+          'changeCycle',
+          'pieces',
+        ],
         take: 6,
       });
-    } else if (season == '여름') {
-      return this.productsRepository.find({
+    } else if (season == 'summer') {
+      return await this.productsRepository.find({
         where: {
-          color: '그린',
+          color: "green",
         },
+        select: [
+          'id',
+          'name',
+          'imageList',
+          'category',
+          'color',
+          'otherColorList',
+          'price',
+          'brand',
+          'releaseDate',
+          'diameter',
+          'changeCycle',
+          'pieces',
+        ],
         take: 6,
       });
-    } else if (season == '가을') {
+    } else if (season == 'autumn') {
       return this.productsRepository.find({
         where: {
-          color: '브라운',
+          color: "brown",
         },
+        select: [
+          'id',
+          'name',
+          'imageList',
+          'category',
+          'color',
+          'otherColorList',
+          'price',
+          'brand',
+          'releaseDate',
+          'diameter',
+          'changeCycle',
+          'pieces',
+        ],
         take: 6,
       });
-    } else if (season == '겨울') {
+    } else if (season == 'winter') {
       return this.productsRepository.find({
         where: {
-          color: '블루',
+          color: "blue",
         },
+        select: [
+          'id',
+          'name',
+          'imageList',
+          'category',
+          'color',
+          'otherColorList',
+          'price',
+          'brand',
+          'releaseDate',
+          'diameter',
+          'changeCycle',
+          'pieces',
+        ],
         take: 6,
       });
     } else {
       console.log('잘못된 계절입니다.');
     }
   }
-  
+
   async findDeadlineEvents() {
     return this.eventsRepository.find({
       order: {
-        endDate: 'DESC',
+        endDate: 'ASC',
       },
       take: 3,
     });
   }
-  
+
   async findNewLens() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth() - 3;
-    const date = today.getDate();
-    const dueDate = `${year}-${month}-${date}`;
-  
+    
+    const now = new Date();
+    const threeMonthAgo = new Date(now.setMonth(now.getMonth() - 3));
+
     const newLensBrand1 = await this.productsRepository.find({
       where: {
         brand: '오렌즈',
-        releaseDate: MoreThanOrEqual(dueDate), //findPopularProductList 참고
+        releaseDate: { $gte: threeMonthAgo },
       },
     });
-  
+
     const newLensBrand2 = await this.productsRepository.find({
       where: {
         brand: '렌즈미',
-        releaseDate: MoreThanOrEqual(dueDate),
+        releaseDate: { $gte: threeMonthAgo },
       },
     });
-  
+
     const newLensBrand3 = await this.productsRepository.find({
       where: {
         brand: '렌즈베리',
-        releaseDate: MoreThanOrEqual(dueDate),
+        releaseDate: { $gte: threeMonthAgo },
       },
     });
-  
-    return {
+
+    return await 
+    [
       newLensBrand1,
       newLensBrand2,
       newLensBrand3,
-    };
+    ];
   }
-  
-  async findRecommendationBySituation(user: Users) {
-    if (user.suitedLens.wearTime == '일상생활') {
+
+  async findRecommendationBySituationOnBoardingData(user: Users) {
+    if (user.wearTime == '일상생활') {
       return this.productsRepository.find({
         where: [
-          { color: '브라운', diameter: LessThanOrEqual(13.4) },
-          { color: '초코', diameter: LessThanOrEqual(13.4) },
+          { color: 'brown', diameter: { $lte: 13.4 } },
+          { color: 'choco', diameter: { $lte: 13.4 } },
         ],
         take: 6,
       });
-    } else if (user.suitedLens.wearTime == '특별한 날') {
+    } else if (user.wearTime == '특별한 날') {
       return this.productsRepository.find({
         where: [
-          { color: '그레이', diameter: LessThanOrEqual(13.9) },
-          { color: '글리터', diameter: LessThanOrEqual(13.9) },
-          { color: '퍼플', diameter: LessThanOrEqual(13.9) },
-          { color: '핑크', diameter: LessThanOrEqual(13.9) },
-          { color: '블루', diameter: LessThanOrEqual(13.9) },
-          { color: '그린', diameter: LessThanOrEqual(13.9) },
+          { color: 'grey', diameter: { $lte: 13.9 } },
+          { color: 'purple', diameter: { $lte: 13.9 } },
+          { color: 'pink', diameter: { $lte: 13.9 } },
+          { color: 'blue', diameter: { $lte: 13.9 } },
+          { color: 'green', diameter: { $lte: 13.9 } },
         ],
         take: 6,
       });
-    } else if (user.suitedLens.wearTime == '운동') {
+    } else if (user.wearTime == '운동') {
       return this.productsRepository.find({
         where: {
-          color: '투명',
-          price: LessThan(20000),
+          color: 'clear',
+          price: { $lt: 20000 },
         },
       });
-    } else if (user.suitedLens.wearTime == '여행') {
+    } else if (user.wearTime == '여행') {
       return this.productsRepository.find({
         where: {
-          color: In(user.wantedLens.color),
+          color: { $in: user.wantedLens.color },
         },
       });
     } else {
       console.log('잘못된 상황입니다.');
     }
   }
-  
+
   async findLatestEvent() {
     return this.eventsRepository.find({
       order: {
@@ -291,10 +338,10 @@ export class AppService {
       take: 3,
     });
   }
-  
+
   async getSearchProduct(query: SearchQueryStringDto) {
     const keyword = query.keyword;
-  
+
     return this.productsRepository.find({
       where: {
         name: Like(`${keyword}%`),
@@ -302,19 +349,19 @@ export class AppService {
       take: 10,
     });
   }
-  
+
   async getFilteredList(body: FilterConditionDto) {
     return this.productsRepository.find({
       where: {
-        brand: In(body.brand),
-        color: In(body.color),
+        brand: { $in: body.brand },
+        color: { $in: body.color },
         diameter: body.diameter,
-        changeCycle: In(body.changeCycle),
+        changeCycle: { $in: body.changeCycle },
       },
-      take: 9, //아마 무한 로딩인지 뭐시기 적용해야 될듯
+      take: 12,
     });
   }
-  
+
   async findPopularItem() {
     return this.productsRepository.find({
       order: {
