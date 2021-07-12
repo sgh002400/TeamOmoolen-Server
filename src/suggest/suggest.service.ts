@@ -185,7 +185,7 @@ export class SuggestService {
     return response;
   }
 
-  async findSuggestProductForYou(id: ObjectID, page: number) {
+  async findSuggestProductForYou(id: ObjectID, page: number, sort: string, order: string) {
     const findUser = await this.usersService.findUserById(id);
     const [items, totalCount] = await this.productsRepository.findAndCount({
       where: {
@@ -205,6 +205,7 @@ export class SuggestService {
         'otherColorList',
       ],
       order: {
+        [sort]: order === 'desc' ? 'DESC' : 'ASC',
         releaseDate: 'DESC',
       },
       skip: (page - 1) * 1,
@@ -222,7 +223,7 @@ export class SuggestService {
     };
   }
 
-  async findSuggestProductForSituation(id: ObjectID, page: number) {
+  async findSuggestProductForSituation(id: ObjectID, page: number, sort: string, order: string) {
     const findUser = await this.usersService.findUserById(id);
 
     switch (findUser.wearTime) {
@@ -244,6 +245,7 @@ export class SuggestService {
             'otherColorList',
           ],
           order: {
+            [sort]: order === 'desc' ? 'DESC' : 'ASC',
             releaseDate: 'DESC',
           },
           skip: (page - 1) * 1,
@@ -331,7 +333,7 @@ export class SuggestService {
     }
   }
 
-  async findSuggestProductForNew(page: number) {
+  async findSuggestProductForNew(page: number, sort: string, order: string) {
     const now = new Date();
     const threeMonthAgo = new Date(now.setMonth(now.getMonth() - 3));
 
@@ -351,10 +353,11 @@ export class SuggestService {
         'otherColorList',
       ],
       order: {
+        [sort]: order === 'desc' ? 'DESC' : 'ASC',
         releaseDate: 'DESC',
       },
       skip: (page - 1) * 1,
-      take: 1,
+      take: 3,
     });
 
     let totalPage = parseInt(String(totalCount / 8));
@@ -368,7 +371,7 @@ export class SuggestService {
     };
   }
 
-  async findSuggestProductForSeason(page: number) {
+  async findSuggestProductForSeason(page: number, sort: string, order: string) {
     const [items, totalCount] = await this.productsRepository.findAndCount({
       where: {
         color: 'blue',
@@ -385,6 +388,7 @@ export class SuggestService {
         'otherColorList',
       ],
       order: {
+        [sort]: order === 'desc' ? 'DESC' : 'ASC',
         releaseDate: 'DESC',
       },
       skip: (page - 1) * 1,
