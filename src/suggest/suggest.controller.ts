@@ -20,25 +20,26 @@ export class SuggestController {
 
   @Get('foryou')
   @UseGuards(new AuthGuard())
-  async findSuggestProductForYou(@User() user, @Query('page') page) {
+  async findSuggestProductForYou(@User() user, @Query() query) {
     const userId = ObjectId(user.userId);
-    return await this.suggestService.findSuggestProductForYou(userId, page);
+    return await this.suggestService.findSuggestProductForYou(userId, query.page, query.sort, query.order);
   }
 
   @Get('situation')
   @UseGuards(new AuthGuard())
-  async findSuggestProductForSituation(@User() user, @Query('page') page) {
+  async findSuggestProductForSituation(@User() user, @Query() query) {
     const userId = ObjectId(user.userId);
-    return await this.suggestService.findSuggestProductForSituation(userId, page);
+    return await this.suggestService.findSuggestProductForSituation(userId, query.page, query.sort, query.order);
   }
 
+  //TODO: 정렬 구현 완료. 기본적으로는 쿼리스트링 없이 요청. 하지만 정렬을 선택한 경우에는 sort와 order가 필요.
   @Get('new')
-  async findSuggestProductForNew(@Query('page') page) {
-    return await this.suggestService.findSuggestProductForNew(page);
+  async findSuggestProductForNew(@Query() query) {
+    return await this.suggestService.findSuggestProductForNew(query.page, query.sort, query.order);
   }
 
   @Get('season')
-  async findSuggestProductForSeason(@Query('page') page) {
-    return await this.suggestService.findSuggestProductForSeason(page);
+  async findSuggestProductForSeason(@Query() query) {
+    return await this.suggestService.findSuggestProductForSeason(query.page, query.sort, query.order);
   }
 }
