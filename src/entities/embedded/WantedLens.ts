@@ -12,5 +12,4 @@ export class WantedLens {
 
   @Column()
   changeCycleRange: Array<number>;
-
 }
