@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  Like,
   ObjectID,
   Repository,
 } from 'typeorm';
@@ -23,9 +22,6 @@ export class AppService {
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
 
-    @InjectRepository(Tips)
-    private tipsRepository: Repository<Tips>,
-
     @InjectRepository(Products)
     private productsRepository: Repository<Products>,
 
@@ -36,12 +32,6 @@ export class AppService {
     private eventsRepository: Repository<Events>,
   ) { }
 
-  /*
-  컬러값 16진수로 바꾸기
-  take했을 때 항상 똑같은 결과 나오지 않나 체크
-  상세보기 눌렀을 때 인기 count 증가
-  findRecommendationByUser
-  */
 
   async saveOnBoardingData(body: saveOnBoardingDataDto, id: ObjectID) {
     //토큰까서 user 찾아내기
@@ -49,13 +39,13 @@ export class AppService {
 
     user.age = body.age;
     user.gender = body.gender;
-
+    user.wearTime = body.wearTime;
+    
     const wantedLens = new WantedLensDto();
     wantedLens.category = body.wantedLens.category;
     wantedLens.color = body.wantedLens.color;
     wantedLens.function = body.wantedLens.function;
-    wantedLens.changeCycle = body.wantedLens.changeCycle;
-    wantedLens.brand = body.wantedLens.brand;
+    wantedLens.changeCycleRange = body.wantedLens.changeCycleRange;
 
     const suitedLens = new SuitedLensDto();
     suitedLens.brand = body.suitedLens.brand;
@@ -65,12 +55,19 @@ export class AppService {
     user.suitedLens = suitedLens;
 
     await this.usersRepository.save(user);
+
+    return {
+      "status": 200,
+      "success": true,
+      "message": "온보딩 데이터 저장 성공"
+    }
   }
 
   async findHomeData(id: ObjectID) {
     //토큰 정보에서 user 정보 찾아야 될 듯
 
     const user = await this.findUserById(id);
+
     const userName = user.name;
     const season = 'spring';
     const wearTime = user.wearTime;
@@ -85,7 +82,7 @@ export class AppService {
       const lastestEvent = await this.findLatestEvent();
 
       const homeValues = new HomeValueDto();
-
+      
       homeValues.username = userName;
       homeValues.recommendationByUser = recommendationByUser;
       homeValues.guides = guides;
@@ -103,8 +100,6 @@ export class AppService {
       //온보딩을 안하는 경우 보류!
     }
   }
-
-  /* 매번 바뀌는지 확인해보기 */
 
   async OnboardingComplete(user: Users) {
     if (
@@ -127,9 +122,9 @@ export class AppService {
   async findRecommendationByUserOnBoardingData(user: Users) {
     return await this.productsRepository.find({
       where: {
-        color: { $in: user.wantedLens.color }, //gold, green
-        function: user.wantedLens.function, // 난시
-        changeCycle: user.wantedLens.changeCycle //0
+        color: { $in: user.wantedLens.color },
+        function: user.wantedLens.function,
+        changeCycleRange: { $in: user.wantedLens.changeCycleRange }
       },
       select: [
         'id',
@@ -144,7 +139,6 @@ export class AppService {
         'diameter',
         'changeCycle',
         'pieces',
-        'function'
       ],
       take: 6,
     });
@@ -344,21 +338,59 @@ export class AppService {
 
     return this.productsRepository.find({
       where: {
-        name: Like(`${keyword}%`),
+        name: { $regex: `^${keyword}` }
       },
-      take: 10,
+      take: 12,
     });
   }
 
   async getFilteredList(body: FilterConditionDto) {
-    return this.productsRepository.find({
+
+    if(body.diameter == -1) {
+      return this.productsRepository.find({
+        where: {
+          brand: { $in: body.brand },
+          color: { $in: body.color },  
+          changeCycleRange: { $in: body.changeCycleRange }
+        },
+      take: 12,
+      });
+    }
+
+    let diameterMin = 0;
+    let diameterMax = 0;
+
+    if(body.diameter == 0) {
+      diameterMin = 0;
+      diameterMax = 12.6;
+    } else if(body.diameter == 1) {
+      diameterMax = 13.0;
+      diameterMin = 12.7;
+    } else if(body.diameter == 2) {
+      diameterMax = 13.3;
+      diameterMin = 13.1;
+    } else if(body.diameter == 3) {
+      diameterMax = 13.6;
+      diameterMin = 13.4;
+    } else if(body.diameter == 4) {
+      diameterMax = 13.9;
+      diameterMin = 13.7;
+    } else if(body.diameter == 5) {
+      diameterMax = 14.0;
+      diameterMin = 30.0;
+    }
+    
+    return await this.productsRepository.find({
       where: {
         brand: { $in: body.brand },
         color: { $in: body.color },
-        diameter: body.diameter,
-        changeCycle: { $in: body.changeCycle },
+        diameter: { 
+          $lte: diameterMax,
+          $gte: diameterMin
+        },
+        changeCycleRange: { $in: body.changeCycleRange } 
       },
-      take: 12,
+    take: 12,
     });
   }
 
@@ -368,6 +400,10 @@ export class AppService {
         searchCount: 'DESC',
       },
       take: 9,
+      select: [
+        "id",
+        "name"
+      ]
     });
   }
 }
