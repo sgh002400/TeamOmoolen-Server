@@ -19,7 +19,7 @@ export class SuggestService {
       where: {
         color: { $in: findUser.wantedLens.color },
         function: findUser.wantedLens.function,
-        changeCycle: findUser.wantedLens.changeCycle,
+        changeCycleRange: { $in: findUser.wantedLens.changeCycleRange },
       },
       select: [
         'id',
@@ -33,7 +33,7 @@ export class SuggestService {
         'otherColorList',
       ],
       order: {
-        releaseDate: 'DESC',
+        name: 'DESC',
       },
       take: 8,
     });
@@ -58,7 +58,7 @@ export class SuggestService {
             'otherColorList',
           ],
           order: {
-            releaseDate: 'DESC',
+            name: 'DESC',
           },
           take: 8,
         });
@@ -80,7 +80,7 @@ export class SuggestService {
             'otherColorList',
           ],
           order: {
-            releaseDate: 'DESC',
+            name: 'DESC',
           },
           take: 8,
         });
@@ -102,7 +102,7 @@ export class SuggestService {
             'otherColorList',
           ],
           order: {
-            releaseDate: 'DESC',
+            name: 'DESC',
           },
           take: 8,
         });
@@ -124,7 +124,7 @@ export class SuggestService {
             'otherColorList',
           ],
           order: {
-            releaseDate: 'DESC',
+            name: 'DESC',
           },
           take: 8,
         });
@@ -149,7 +149,7 @@ export class SuggestService {
         'otherColorList',
       ],
       order: {
-        releaseDate: 'DESC',
+        name: 'DESC',
       },
       take: 8,
     });
@@ -171,7 +171,7 @@ export class SuggestService {
         'otherColorList',
       ],
       order: {
-        releaseDate: 'DESC',
+        name: 'DESC',
       },
       take: 8,
     });
@@ -191,7 +191,7 @@ export class SuggestService {
       where: {
         color: { $in: findUser.wantedLens.color },
         function: findUser.wantedLens.function,
-        changeCycle: findUser.wantedLens.changeCycle,
+        changeCycleRange: { $in: findUser.wantedLens.changeCycleRange },
       },
       select: [
         'id',
@@ -206,10 +206,10 @@ export class SuggestService {
       ],
       order: {
         [sort]: order === 'desc' ? 'DESC' : 'ASC',
-        releaseDate: 'DESC',
+        name: 'DESC',
       },
       skip: (page - 1) * 1,
-      take: 1,
+      take: 8,
     });
 
     let totalPage = parseInt(String(totalCount / 8));
@@ -218,7 +218,7 @@ export class SuggestService {
     }
 
     return {
-      data: items,
+      items: items,
       totalPage: totalPage,
     };
   }
@@ -227,8 +227,8 @@ export class SuggestService {
     const findUser = await this.usersService.findUserById(id);
 
     switch (findUser.wearTime) {
-      case '일상':
-        let [items, totalCount] = await this.productsRepository.findAndCount({
+      case '일상': {
+        const [items, totalCount] = await this.productsRepository.findAndCount({
           where: {
             diameter: { $lte: 13.4 },
             color: { $in: ['brown', 'choco'] },
@@ -246,13 +246,25 @@ export class SuggestService {
           ],
           order: {
             [sort]: order === 'desc' ? 'DESC' : 'ASC',
-            releaseDate: 'DESC',
+            name: 'DESC',
           },
           skip: (page - 1) * 1,
-          take: 1,
+          take: 8,
         });
-      case '특별':
-        [items, totalCount] = await this.productsRepository.findAndCount({
+
+        let totalPage = parseInt(String(totalCount / 8));
+        if (totalCount % 8 != 0) {
+          totalPage++;
+        }
+
+        return {
+          items: items,
+          totalPage: totalPage,
+        };
+        break;
+      }
+      case '특별': {
+        const [items, totalCount] = await this.productsRepository.findAndCount({
           where: {
             diameter: { $lt: 13.9 },
             color: { $in: ['grey', 'purple', 'pink', 'blue', 'green'] },
@@ -269,13 +281,25 @@ export class SuggestService {
             'otherColorList',
           ],
           order: {
-            releaseDate: 'DESC',
+            name: 'DESC',
           },
           skip: (page - 1) * 1,
-          take: 1,
+          take: 8,
         });
-      case '운동':
-        [items, totalCount] = await this.productsRepository.findAndCount({
+
+        let totalPage = parseInt(String(totalCount / 8));
+        if (totalCount % 8 != 0) {
+          totalPage++;
+        }
+
+        return {
+          items: items,
+          totalPage: totalPage,
+        };
+        break;
+      }
+      case '운동': {
+        const [items, totalCount] = await this.productsRepository.findAndCount({
           where: {
             category: '투명',
             price: { $lt: 20000 },
@@ -292,13 +316,25 @@ export class SuggestService {
             'otherColorList',
           ],
           order: {
-            releaseDate: 'DESC',
+            name: 'DESC',
           },
           skip: (page - 1) * 1,
-          take: 1,
+          take: 8,
         });
-      case '여행':
-        [items, totalCount] = await this.productsRepository.findAndCount({
+
+        let totalPage = parseInt(String(totalCount / 8));
+        if (totalCount % 8 != 0) {
+          totalPage++;
+        }
+
+        return {
+          items: items,
+          totalPage: totalPage,
+        };
+        break;
+      }
+      case '여행': {
+        const [items, totalCount] = await this.productsRepository.findAndCount({
           where: {
             color: { $in: findUser.wantedLens.color },
             changeCycle: 1,
@@ -315,10 +351,10 @@ export class SuggestService {
             'otherColorList',
           ],
           order: {
-            releaseDate: 'DESC',
+            name: 'DESC',
           },
           skip: (page - 1) * 1,
-          take: 1,
+          take: 8,
         });
 
         let totalPage = parseInt(String(totalCount / 8));
@@ -327,9 +363,11 @@ export class SuggestService {
         }
 
         return {
-          data: items,
+          items: items,
           totalPage: totalPage,
         };
+        break;
+      }
     }
   }
 
@@ -357,7 +395,7 @@ export class SuggestService {
         releaseDate: 'DESC',
       },
       skip: (page - 1) * 1,
-      take: 3,
+      take: 8,
     });
 
     let totalPage = parseInt(String(totalCount / 8));
@@ -366,7 +404,7 @@ export class SuggestService {
     }
 
     return {
-      data: items,
+      items: items,
       totalPage: totalPage,
     };
   }
@@ -389,10 +427,10 @@ export class SuggestService {
       ],
       order: {
         [sort]: order === 'desc' ? 'DESC' : 'ASC',
-        releaseDate: 'DESC',
+        name: 'DESC',
       },
       skip: (page - 1) * 1,
-      take: 1,
+      take: 8,
     });
 
     let totalPage = parseInt(String(totalCount / 8));
@@ -401,7 +439,7 @@ export class SuggestService {
     }
 
     return {
-      data: items,
+      items: items,
       totalPage: totalPage,
     };
   }
