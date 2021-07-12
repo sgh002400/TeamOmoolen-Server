@@ -2,9 +2,10 @@ export class FilterConditionDto {
   
   public brand: Array<string>;
 
-  public color: Array<number>;
+  public color: Array<string>;
 
-  public diameter: string;
+  public diameter: number;
 
-  public changeCycle: Array<number>;
+  public changeCycleRange: Array<number>;
+
 }

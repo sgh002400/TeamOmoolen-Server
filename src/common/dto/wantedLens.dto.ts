@@ -1,7 +1,6 @@
 export class WantedLensDto {
-  public category: string;
-  public color: Array<number>;
-  public function: Array<string>;
-  public changeCycle: Array<number>;
-  public brand: string;
+  public category: Array<string>;
+  public color: Array<string>;
+  public function: string;
+  public changeCycleRange: Array<number>;
 }

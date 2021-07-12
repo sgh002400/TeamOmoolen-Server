@@ -16,7 +16,7 @@ export class HomeValueDto {
 
   public deadlineEvent: Array<Events>;
 
-  public newLens: Array<Array<Products>>;
+  public newLens: Array<Products[]>;
 
   public situation: string;
 

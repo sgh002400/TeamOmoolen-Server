@@ -1,4 +1,4 @@
 export class SuitedLensDto {
-  public lensName: string;
-  public wearTime: string;
+  public brand: string;
+  public name: string;
 }
