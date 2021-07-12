@@ -16,11 +16,11 @@ export class SuggestService {
     const findUser = await this.usersService.findUserById(id);
 
     const suggestForYou = await this.productsRepository.find({
-      // where: {
-      //   color: { $in: findUser.wantedLens.color },
-      //   function: findUser.wantedLens.function,
-      //   changeCycle: findUser.wantedLens.changeCycle,
-      // },
+      where: {
+        color: { $in: findUser.wantedLens.color },
+        function: findUser.wantedLens.function,
+        changeCycle: findUser.wantedLens.changeCycle,
+      },
       select: [
         'id',
         'imageList',
@@ -176,23 +176,23 @@ export class SuggestService {
       take: 8,
     });
 
-    // const response = {};
-    // response['suggestForYou'] = suggestForYou;
-    // response['suggestForSituation'] = suggestForSituation;
-    // response['suggestForNew'] = suggestForNew;
-    // response['suggestForSeason'] = suggestForSeason;
+    const response = {};
+    response['suggestForYou'] = suggestForYou;
+    response['suggestForSituation'] = suggestForSituation;
+    response['suggestForNew'] = suggestForNew;
+    response['suggestForSeason'] = suggestForSeason;
 
-    //return response;
+    return response;
   }
 
   async findSuggestProductForYou(id: ObjectID, page: number, sort: string, order: string) {
     const findUser = await this.usersService.findUserById(id);
     const [items, totalCount] = await this.productsRepository.findAndCount({
-      // where: {
-      //   color: { $in: findUser.wantedLens.color },
-      //   function: findUser.wantedLens.function,
-      //   changeCycle: findUser.wantedLens.changeCycle,
-      // },
+      where: {
+        color: { $in: findUser.wantedLens.color },
+        function: findUser.wantedLens.function,
+        changeCycle: findUser.wantedLens.changeCycle,
+      },
       select: [
         'id',
         'imageList',

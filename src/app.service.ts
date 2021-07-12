@@ -56,8 +56,6 @@ export class AppService {
 
     await this.usersRepository.save(user);
 
-    console.log(user);
-
     return {
       "status": 200,
       "success": true,
