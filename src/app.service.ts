@@ -39,7 +39,8 @@ export class AppService {
 
     user.age = body.age;
     user.gender = body.gender;
-
+    user.wearTime = body.wearTime;
+    
     const wantedLens = new WantedLensDto();
     wantedLens.category = body.wantedLens.category;
     wantedLens.color = body.wantedLens.color;
@@ -55,6 +56,8 @@ export class AppService {
 
     await this.usersRepository.save(user);
 
+    console.log(user);
+
     return {
       "status": 200,
       "success": true,
@@ -66,6 +69,7 @@ export class AppService {
     //토큰 정보에서 user 정보 찾아야 될 듯
 
     const user = await this.findUserById(id);
+
     const userName = user.name;
     const season = 'spring';
     const wearTime = user.wearTime;
@@ -80,7 +84,7 @@ export class AppService {
       const lastestEvent = await this.findLatestEvent();
 
       const homeValues = new HomeValueDto();
-
+      
       homeValues.username = userName;
       homeValues.recommendationByUser = recommendationByUser;
       homeValues.guides = guides;
@@ -98,8 +102,6 @@ export class AppService {
       //온보딩을 안하는 경우 보류!
     }
   }
-
-  /* 매번 바뀌는지 확인해보기 */
 
   async OnboardingComplete(user: Users) {
     if (

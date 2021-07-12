@@ -7,6 +7,8 @@ export class saveOnBoardingDataDto {
 
   public age: number;
 
+  public wearTime: string;
+
   public wantedLens: WantedLensDto;
 
   public suitedLens: SuitedLensDto;

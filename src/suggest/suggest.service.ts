@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ParseIntPipe } from '@nestjs/common';
 import { Products } from '../entities/Products';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, LessThan, ObjectID, Repository } from 'typeorm';
-import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -13,17 +12,31 @@ export class SuggestService {
     private readonly usersService: UsersService,
   ) {}
 
-  async findSuggestProductList(id: ObjectID) {
+  async findSuggestProduct(id: ObjectID) {
     const findUser = await this.usersService.findUserById(id);
 
-    // const suggestForYou = await this.productsRepository.find({
-    //   where: {
-    //     color: { $in: findUser.wantedLens.color },
-    //     function: findUser.wantedLens.function,
-    //     changeCycle: findUser.wantedLens.changeCycle,
-    //   },
-    //   take: 8,
-    // });
+    const suggestForYou = await this.productsRepository.find({
+      // where: {
+      //   color: { $in: findUser.wantedLens.color },
+      //   function: findUser.wantedLens.function,
+      //   changeCycle: findUser.wantedLens.changeCycle,
+      // },
+      select: [
+        'id',
+        'imageList',
+        'brand',
+        'name',
+        'diameter',
+        'changeCycle',
+        'pieces',
+        'price',
+        'otherColorList',
+      ],
+      order: {
+        releaseDate: 'DESC',
+      },
+      take: 8,
+    });
 
     let suggestForSituation;
     switch (findUser.wearTime) {
@@ -33,6 +46,20 @@ export class SuggestService {
             diameter: { $lte: 13.4 },
             color: { $in: ['brown', 'choco'] },
           },
+          select: [
+            'id',
+            'imageList',
+            'brand',
+            'name',
+            'diameter',
+            'changeCycle',
+            'pieces',
+            'price',
+            'otherColorList',
+          ],
+          order: {
+            releaseDate: 'DESC',
+          },
           take: 8,
         });
       case '특별':
@@ -40,6 +67,20 @@ export class SuggestService {
           where: {
             diameter: { $lt: 13.9 },
             color: { $in: ['grey', 'purple', 'pink', 'blue', 'green'] },
+          },
+          select: [
+            'id',
+            'imageList',
+            'brand',
+            'name',
+            'diameter',
+            'changeCycle',
+            'pieces',
+            'price',
+            'otherColorList',
+          ],
+          order: {
+            releaseDate: 'DESC',
           },
           take: 8,
         });
@@ -49,6 +90,20 @@ export class SuggestService {
             category: '투명',
             price: { $lt: 20000 },
           },
+          select: [
+            'id',
+            'imageList',
+            'brand',
+            'name',
+            'diameter',
+            'changeCycle',
+            'pieces',
+            'price',
+            'otherColorList',
+          ],
+          order: {
+            releaseDate: 'DESC',
+          },
           take: 8,
         });
       case '여행':
@@ -56,6 +111,20 @@ export class SuggestService {
           where: {
             color: { $in: findUser.wantedLens.color },
             changeCycle: 1,
+          },
+          select: [
+            'id',
+            'imageList',
+            'brand',
+            'name',
+            'diameter',
+            'changeCycle',
+            'pieces',
+            'price',
+            'otherColorList',
+          ],
+          order: {
+            releaseDate: 'DESC',
           },
           take: 8,
         });
@@ -68,6 +137,17 @@ export class SuggestService {
       where: {
         releaseDate: { $gte: threeMonthAgo },
       },
+      select: [
+        'id',
+        'imageList',
+        'brand',
+        'name',
+        'diameter',
+        'changeCycle',
+        'pieces',
+        'price',
+        'otherColorList',
+      ],
       order: {
         releaseDate: 'DESC',
       },
@@ -79,6 +159,20 @@ export class SuggestService {
       where: {
         color: 'blue',
       },
+      select: [
+        'id',
+        'imageList',
+        'brand',
+        'name',
+        'diameter',
+        'changeCycle',
+        'pieces',
+        'price',
+        'otherColorList',
+      ],
+      order: {
+        releaseDate: 'DESC',
+      },
       take: 8,
     });
 
@@ -89,5 +183,226 @@ export class SuggestService {
     // response['suggestForSeason'] = suggestForSeason;
 
     //return response;
+  }
+
+  async findSuggestProductForYou(id: ObjectID, page: number, sort: string, order: string) {
+    const findUser = await this.usersService.findUserById(id);
+    const [items, totalCount] = await this.productsRepository.findAndCount({
+      // where: {
+      //   color: { $in: findUser.wantedLens.color },
+      //   function: findUser.wantedLens.function,
+      //   changeCycle: findUser.wantedLens.changeCycle,
+      // },
+      select: [
+        'id',
+        'imageList',
+        'brand',
+        'name',
+        'diameter',
+        'changeCycle',
+        'pieces',
+        'price',
+        'otherColorList',
+      ],
+      order: {
+        [sort]: order === 'desc' ? 'DESC' : 'ASC',
+        releaseDate: 'DESC',
+      },
+      skip: (page - 1) * 1,
+      take: 1,
+    });
+
+    let totalPage = parseInt(String(totalCount / 8));
+    if (totalCount % 8 != 0) {
+      totalPage++;
+    }
+
+    return {
+      data: items,
+      totalPage: totalPage,
+    };
+  }
+
+  async findSuggestProductForSituation(id: ObjectID, page: number, sort: string, order: string) {
+    const findUser = await this.usersService.findUserById(id);
+
+    switch (findUser.wearTime) {
+      case '일상':
+        let [items, totalCount] = await this.productsRepository.findAndCount({
+          where: {
+            diameter: { $lte: 13.4 },
+            color: { $in: ['brown', 'choco'] },
+          },
+          select: [
+            'id',
+            'imageList',
+            'brand',
+            'name',
+            'diameter',
+            'changeCycle',
+            'pieces',
+            'price',
+            'otherColorList',
+          ],
+          order: {
+            [sort]: order === 'desc' ? 'DESC' : 'ASC',
+            releaseDate: 'DESC',
+          },
+          skip: (page - 1) * 1,
+          take: 1,
+        });
+      case '특별':
+        [items, totalCount] = await this.productsRepository.findAndCount({
+          where: {
+            diameter: { $lt: 13.9 },
+            color: { $in: ['grey', 'purple', 'pink', 'blue', 'green'] },
+          },
+          select: [
+            'id',
+            'imageList',
+            'brand',
+            'name',
+            'diameter',
+            'changeCycle',
+            'pieces',
+            'price',
+            'otherColorList',
+          ],
+          order: {
+            releaseDate: 'DESC',
+          },
+          skip: (page - 1) * 1,
+          take: 1,
+        });
+      case '운동':
+        [items, totalCount] = await this.productsRepository.findAndCount({
+          where: {
+            category: '투명',
+            price: { $lt: 20000 },
+          },
+          select: [
+            'id',
+            'imageList',
+            'brand',
+            'name',
+            'diameter',
+            'changeCycle',
+            'pieces',
+            'price',
+            'otherColorList',
+          ],
+          order: {
+            releaseDate: 'DESC',
+          },
+          skip: (page - 1) * 1,
+          take: 1,
+        });
+      case '여행':
+        [items, totalCount] = await this.productsRepository.findAndCount({
+          where: {
+            color: { $in: findUser.wantedLens.color },
+            changeCycle: 1,
+          },
+          select: [
+            'id',
+            'imageList',
+            'brand',
+            'name',
+            'diameter',
+            'changeCycle',
+            'pieces',
+            'price',
+            'otherColorList',
+          ],
+          order: {
+            releaseDate: 'DESC',
+          },
+          skip: (page - 1) * 1,
+          take: 1,
+        });
+
+        let totalPage = parseInt(String(totalCount / 8));
+        if (totalCount % 8 != 0) {
+          totalPage++;
+        }
+
+        return {
+          data: items,
+          totalPage: totalPage,
+        };
+    }
+  }
+
+  async findSuggestProductForNew(page: number, sort: string, order: string) {
+    const now = new Date();
+    const threeMonthAgo = new Date(now.setMonth(now.getMonth() - 3));
+
+    const [items, totalCount] = await this.productsRepository.findAndCount({
+      where: {
+        releaseDate: { $gte: threeMonthAgo },
+      },
+      select: [
+        'id',
+        'imageList',
+        'brand',
+        'name',
+        'diameter',
+        'changeCycle',
+        'pieces',
+        'price',
+        'otherColorList',
+      ],
+      order: {
+        [sort]: order === 'desc' ? 'DESC' : 'ASC',
+        releaseDate: 'DESC',
+      },
+      skip: (page - 1) * 1,
+      take: 3,
+    });
+
+    let totalPage = parseInt(String(totalCount / 8));
+    if (totalCount % 8 != 0) {
+      totalPage++;
+    }
+
+    return {
+      data: items,
+      totalPage: totalPage,
+    };
+  }
+
+  async findSuggestProductForSeason(page: number, sort: string, order: string) {
+    const [items, totalCount] = await this.productsRepository.findAndCount({
+      where: {
+        color: 'blue',
+      },
+      select: [
+        'id',
+        'imageList',
+        'brand',
+        'name',
+        'diameter',
+        'changeCycle',
+        'pieces',
+        'price',
+        'otherColorList',
+      ],
+      order: {
+        [sort]: order === 'desc' ? 'DESC' : 'ASC',
+        releaseDate: 'DESC',
+      },
+      skip: (page - 1) * 1,
+      take: 1,
+    });
+
+    let totalPage = parseInt(String(totalCount / 8));
+    if (totalCount % 8 != 0) {
+      totalPage++;
+    }
+
+    return {
+      data: items,
+      totalPage: totalPage,
+    };
   }
 }
