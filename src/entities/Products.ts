@@ -41,7 +41,7 @@ export class Products {
 
   @Column()
   diameter: number; // 직경
-
+  
   @Column()
   changeCycle: number; // 주기
 
