@@ -1,3 +1,5 @@
+import { ManyToOne } from 'typeorm';
+import { OneToMany } from 'typeorm';
 import {
   Column,
   Entity,
@@ -57,9 +59,6 @@ export class Products {
 
   @Column()
   visionMaximum: number;
-
-  @ManyToMany(() => Products)
-  suggestList: Products[];
 
   @Column()
   searchCount: number;
