@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan, MoreThan, MoreThanOrEqual } from 'typeorm';
 import { ObjectID, Repository } from 'typeorm';
 import { Products } from '../entities/Products';
 
@@ -25,11 +24,44 @@ export class ProductsService {
       where: {
         releaseDate: { $gte: threeMonthAgo },
       },
+      select: [
+        'imageList',
+        'brand',
+        'name',
+        'diameter',
+        'changeCycle',
+        'pieces',
+      ],
       order: {
         releaseDate: 'DESC',
         searchCount: 'DESC',
       },
       take: 6,
+    });
+  }
+
+  async findSuggestProductList(id: ObjectID) {
+    const findItem = await this.productsRepository.findOne({
+      where: { _id: id },
+    });
+
+    return await this.productsRepository.find({
+      where: {
+        brand: findItem.brand,
+        color: findItem.color,
+        diameter: findItem.diameter,
+      },
+      select: [
+        'imageList',
+        'brand',
+        'name',
+        'diameter',
+        'changeCycle',
+        'pieces',
+        'price',
+        'otherColorList',
+      ],
+      take: 4,
     });
   }
 }
