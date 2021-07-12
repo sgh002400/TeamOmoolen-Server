@@ -16,14 +16,14 @@ export class SuggestService {
   async findSuggestProductList(id: ObjectID) {
     const findUser = await this.usersService.findUserById(id);
 
-    const suggestForYou = await this.productsRepository.find({
-      where: {
-        color: { $in: findUser.wantedLens.color },
-        function: findUser.wantedLens.function,
-        changeCycle: findUser.wantedLens.changeCycle,
-      },
-      take: 8,
-    });
+    // const suggestForYou = await this.productsRepository.find({
+    //   where: {
+    //     color: { $in: findUser.wantedLens.color },
+    //     function: findUser.wantedLens.function,
+    //     changeCycle: findUser.wantedLens.changeCycle,
+    //   },
+    //   take: 8,
+    // });
 
     let suggestForSituation;
     switch (findUser.wearTime) {
@@ -82,12 +82,12 @@ export class SuggestService {
       take: 8,
     });
 
-    const response = {};
-    response['suggestForYou'] = suggestForYou;
-    response['suggestForSituation'] = suggestForSituation;
-    response['suggestForNew'] = suggestForNew;
-    response['suggestForSeason'] = suggestForSeason;
+    // const response = {};
+    // response['suggestForYou'] = suggestForYou;
+    // response['suggestForSituation'] = suggestForSituation;
+    // response['suggestForNew'] = suggestForNew;
+    // response['suggestForSeason'] = suggestForSeason;
 
-    return response;
+    //return response;
   }
 }

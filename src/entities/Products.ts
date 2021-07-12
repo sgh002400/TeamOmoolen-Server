@@ -44,6 +44,9 @@ export class Products {
   changeCycle: number; // 주기
 
   @Column()
+  changeCycleRange: number;
+
+  @Column()
   pieces: number; // 개수
 
   @Column()
