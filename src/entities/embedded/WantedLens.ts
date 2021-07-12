@@ -11,8 +11,5 @@ export class WantedLens {
   function: string;
 
   @Column()
-  changeCycle: number;
-
-  @Column()
-  brand: string;
+  changeCycleRange: Array<number>;
 }

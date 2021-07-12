@@ -1,3 +1,5 @@
+import { ManyToOne } from 'typeorm';
+import { OneToMany } from 'typeorm';
 import {
   Column,
   Entity,
@@ -44,6 +46,9 @@ export class Products {
   changeCycle: number; // 주기
 
   @Column()
+  changeCycleRange: number;
+
+  @Column()
   pieces: number; // 개수
 
   @Column()
@@ -57,9 +62,6 @@ export class Products {
 
   @Column()
   visionMaximum: number;
-
-  @ManyToMany(() => Products)
-  suggestList: Products[];
 
   @Column()
   searchCount: number;

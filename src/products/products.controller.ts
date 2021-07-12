@@ -11,10 +11,8 @@ export class ProductsController {
   @Get(':id')
   async findProduct(@Param('id', ParseObjectIdPipe) id: ObjectID, @Res() res) {
     const findProduct = await this.productsService.findProductById(id);
+    const suggestProductList = await this.productsService.findSuggestProductList(id);
     const popularProductList = await this.productsService.findPopularProductList();
-
-    console.log(findProduct);
-    console.log(popularProductList);
 
     const response = new ProductDetailResponseDto();
     response.imageURL = findProduct.imageList;
@@ -27,9 +25,13 @@ export class ProductsController {
     response.function = findProduct.function;
     response.color = findProduct.color;
     response.otherColorList = findProduct.otherColorList;
-    response.suggestList = findProduct.suggestList;
+    response.suggestList = suggestProductList;
     response.popularList = popularProductList;
 
-    res.json(response);
+    res.status(200).send({
+      status: 200,
+      message: '상세페이지 조회 성공',
+      data: response,
+    });
   }
 }
