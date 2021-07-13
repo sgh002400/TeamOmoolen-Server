@@ -13,6 +13,7 @@ import { Products } from './entities/Products';
 import { Users } from './entities/Users';
 import { UsersService } from './users/users.service';
 import { newLensBrandDto } from './common/dto/newLensBrand.dto';
+import { GuideHomeDto } from './common/dto/guide.home.dto';
 
 @Injectable()
 export class AppService {
@@ -99,6 +100,7 @@ export class AppService {
       where: {
         category: '어쩌고 저쩌고',
       },
+      select: ['id', 'question', 'answer'],
       order: {
         createAt: 'DESC',
       },
@@ -109,6 +111,7 @@ export class AppService {
       where: {
         category: '어쩌고 저쩌고',
       },
+      select: ['id', 'question', 'answer'],
       order: {
         createAt: 'DESC',
       },
@@ -119,11 +122,22 @@ export class AppService {
       where: {
         category: '어쩌고 저쩌고',
       },
+      select: ['id', 'question', 'answer'],
       order: {
         createAt: 'DESC',
       },
       take: 3,
     });
+
+    const guide1 = new GuideHomeDto('어쩌고 저쩌고', firstGuideList);
+    const guide2 = new GuideHomeDto('어쩌고 저쩌고', secondGuideList);
+    const guide3 = new GuideHomeDto('어쩌고 저쩌고', thirdGuideList);
+
+    return {
+      guideList1: guide1,
+      guideList2: guide2,
+      guideList3: guide3,
+    };
 
     return [firstGuideList, secondGuideList, thirdGuideList];
   }

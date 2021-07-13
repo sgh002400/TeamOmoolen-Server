@@ -7,7 +7,7 @@ export class HomeValueDto {
 
   public recommendationByUser: Array<Products>;
 
-  public guides: Array<Guides[]>;
+  public guides;
 
   public season: string;
 
