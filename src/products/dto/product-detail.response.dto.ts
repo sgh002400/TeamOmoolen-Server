@@ -6,7 +6,8 @@ export class ProductDetailResponseDto {
   public name;
   public price;
   public diameter;
-  public changeCycle;
+  public changeCycleMinimum;
+  public changeCycleMaximum;
   public material;
   public function;
   public color;
