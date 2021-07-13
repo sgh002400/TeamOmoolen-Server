@@ -17,6 +17,9 @@ export class Guides {
   id: ObjectID;
 
   @Column()
+  category: string;
+
+  @Column()
   question: string;
 
   @Column()
