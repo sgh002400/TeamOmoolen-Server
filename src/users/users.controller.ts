@@ -5,7 +5,7 @@ import { User } from '../common/decorators/user.decorator';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const ObjectId = require('mongodb').ObjectID;
 
-@Controller('users')
+@Controller('/api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
