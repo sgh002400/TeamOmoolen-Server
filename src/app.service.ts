@@ -12,6 +12,7 @@ import { Guides } from './entities/Guides';
 import { Products } from './entities/Products';
 import { Users } from './entities/Users';
 import { UsersService } from './users/users.service';
+import { newLensBrandDto } from './common/dto/newLensBrand.dto';
 
 @Injectable()
 export class AppService {
@@ -225,31 +226,42 @@ export class AppService {
     const now = new Date();
     const threeMonthAgo = new Date(now.setMonth(now.getMonth() - 3));
 
-    const newLensBrand1 = await this.productsRepository.find({
+    const newLensProducts1 = await this.productsRepository.find({
       where: {
         brand: '오렌즈',
         releaseDate: { $gte: threeMonthAgo },
       },
       select: ['id', 'imageList', 'brand', 'name', 'price'],
+      take: 4,
     });
 
-    const newLensBrand2 = await this.productsRepository.find({
+    const newLensProducts2 = await this.productsRepository.find({
       where: {
         brand: '렌즈미',
         releaseDate: { $gte: threeMonthAgo },
       },
       select: ['id', 'imageList', 'brand', 'name', 'price'],
+      take: 4,
     });
 
-    const newLensBrand3 = await this.productsRepository.find({
+    const newLensProducts3 = await this.productsRepository.find({
       where: {
         brand: '렌즈베리',
         releaseDate: { $gte: threeMonthAgo },
       },
       select: ['id', 'imageList', 'brand', 'name', 'price'],
+      take: 4,
     });
 
-    return [newLensBrand1, newLensBrand2, newLensBrand3];
+    const newLensBrand1 = new newLensBrandDto('오렌즈', newLensProducts1);
+    const newLensBrand2 = new newLensBrandDto('렌즈미', newLensProducts2);
+    const newLensBrand3 = new newLensBrandDto('렌즈베리', newLensProducts3);
+
+    return {
+      newLensBrand1: newLensBrand1,
+      newLensBrand2: newLensBrand2,
+      newLensBrand3: newLensBrand3,
+    };
   }
 
   //온보딩 과정에서 입력한 상황(wearTime) 기반 추천상품 목록
