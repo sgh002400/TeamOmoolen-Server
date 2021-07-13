@@ -43,7 +43,10 @@ export class Products {
   diameter: number; // 직경
 
   @Column()
-  changeCycle: number; // 주기
+  changeCycleMinimum: number; // 주기 최소값
+
+  @Column()
+  changeCycleMaximum: number; // 주기 최대값
 
   @Column()
   changeCycleRange: number;
