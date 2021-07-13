@@ -20,7 +20,8 @@ export class ProductsController {
     response.name = findProduct.name;
     response.price = findProduct.price;
     response.diameter = findProduct.diameter;
-    response.changeCycle = findProduct.changeCycle;
+    response.changeCycleMinimum = findProduct.changeCycleMinimum;
+    response.changeCycleMaximum = findProduct.changeCycleMaximum;
     response.material = findProduct.material;
     response.function = findProduct.function;
     response.color = findProduct.color;

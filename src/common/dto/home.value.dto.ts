@@ -7,7 +7,7 @@ export class HomeValueDto {
 
   public recommendationByUser: Array<Products>;
 
-  public guides: Array<Guides[]>;
+  public guides;
 
   public season: string;
 
@@ -15,7 +15,7 @@ export class HomeValueDto {
 
   public deadlineEvent: Array<Events>;
 
-  public newLens: Array<Products[]>;
+  public newLens;
 
   public situation: string;
 
