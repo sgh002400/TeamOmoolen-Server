@@ -41,7 +41,7 @@ export class AuthController {
         userName = req.body.familyName + req.body.givenName;
       }
 
-      const user = await this.authService.findOrCreateUser({
+      const { user, isNewUser } = await this.authService.findOrCreateUser({
         userName,
         oauthKey,
       });
@@ -60,26 +60,30 @@ export class AuthController {
     }
   }
 
-  // /**
-  //  * KAKAO LOGIN CALL BACK 함수
-  //  * 클라이언트에서 [POST] 'https://omoolen.loca.lt/auth/kakao' 요청.
-  //  * req.body 안에 (name, email) 담겨서 온다.
-  //  */
-  // @Post('kakao')
-  // async kakaoLogin(@Req() req, @Res() res) {
-  //   try {
-  //     userName = req.body.name;
-  //     userEmail = req.body.email;
-  //
-  //     const user = await this.authService.findOrCreateUser({
-  //       userName,
-  //       userEmail,
-  //     });
-  //     const accessToken = this.authService.makeAccessToken(user.id);
-  //     res.json(accessToken);
-  //   } catch (ex) {
-  //     console.error(ex);
-  //     res.send('An error occurred!');
-  //   }
-  // }
+  /**
+   * KAKAO LOGIN CALL BACK 함수
+   * 클라이언트에서 [POST] 'https://omoolen.loca.lt/auth/kakao' 요청.
+   * req.body 안에 (oauthKey, name) 담겨서 온다.
+   */
+  @Post('kakao')
+  async kakaoLogin(@Req() req, @Res() res) {
+    try {
+      const userName = req.body.name;
+      const oauthKey = req.body.oauthKey;
+
+      const { user, isNewUser } = await this.authService.findOrCreateUser({
+        userName,
+        oauthKey,
+      });
+      const accessToken = this.authService.makeAccessToken(user.id);
+
+      res.json({
+        accessToken: accessToken,
+        isNewUser: isNewUser,
+      });
+    } catch (ex) {
+      console.error(ex);
+      res.send('An error occurred!');
+    }
+  }
 }
