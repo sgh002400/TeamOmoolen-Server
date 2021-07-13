@@ -1,14 +1,13 @@
-import { Events } from "src/entities/Events";
-import { Guides } from "src/entities/Guides";
-import { Products } from "src/entities/Products";
+import { Events } from 'src/entities/Events';
+import { Guides } from 'src/entities/Guides';
+import { Products } from 'src/entities/Products';
 
 export class HomeValueDto {
-
   public username: string;
 
   public recommendationByUser: Array<Products>;
 
-  public guides: Array<Guides>;
+  public guides: Array<Guides[]>;
 
   public season: string;
 

@@ -1,8 +1,7 @@
-import { SuitedLensDto } from "./suitedLens.dto";
-import { WantedLensDto } from "./wantedLens.dto";
+import { SuitedLensDto } from './suitedLens.dto';
+import { WantedLensDto } from './wantedLens.dto';
 
 export class saveOnBoardingDataDto {
-
   public gender: string;
 
   public age: number;
@@ -12,5 +11,4 @@ export class saveOnBoardingDataDto {
   public wantedLens: WantedLensDto;
 
   public suitedLens: SuitedLensDto;
-
 }
