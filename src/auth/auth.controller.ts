@@ -22,7 +22,7 @@ const config = {
 
 const auth = new AppleAuth(config, 'src/config/AuthKey_CY92UWQ3F3.p8');
 
-@Controller('auth')
+@Controller('/api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

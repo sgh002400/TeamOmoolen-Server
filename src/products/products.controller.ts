@@ -4,7 +4,7 @@ import { ProductsService } from './products.service';
 import { ProductDetailResponseDto } from './dto/product-detail.response.dto';
 import { ParseObjectIdPipe } from '../common/pipe/objectId.pipe';
 
-@Controller('products')
+@Controller('/api/products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 

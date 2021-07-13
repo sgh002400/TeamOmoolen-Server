@@ -7,7 +7,7 @@ import { Query } from '@nestjs/common';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const ObjectId = require('mongodb').ObjectID;
 
-@Controller('suggest')
+@Controller('/api/suggest')
 export class SuggestController {
   constructor(private readonly suggestService: SuggestService) {}
 
