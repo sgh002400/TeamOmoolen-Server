@@ -138,8 +138,6 @@ export class AppService {
       guideList2: guide2,
       guideList3: guide3,
     };
-
-    return [firstGuideList, secondGuideList, thirdGuideList];
   }
 
   //계절별 추천상품 목록
