@@ -1,26 +1,13 @@
 import { Query, Req } from '@nestjs/common';
 import { Controller, Get, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+import { appleAuthConfig } from '../config/authConfig';
 const jwt = require('jsonwebtoken');
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const AppleAuth = require('apple-auth');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const bodyParser = require('body-parser');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 
-const config = {
-  client_id: 'com.Omoolen.service',
-  team_id: '4QG3GC35LA',
-  redirect_uri: 'https://omoolen.loca.lt/auth/apple',
-  key_id: 'CY92UWQ3F3',
-  scope: 'name email',
-};
-
-const auth = new AppleAuth(config, 'src/config/AuthKey_CY92UWQ3F3.p8');
+const auth = new AppleAuth(appleAuthConfig, 'src/config/AuthKey_CY92UWQ3F3.p8');
 
 @Controller('/api/auth')
 export class AuthController {
@@ -28,8 +15,6 @@ export class AuthController {
 
   /**
    * APPLE LOGIN CALL BACK 함수
-   * 클라이언트에서 [POST]'https://ommolen.loca.lt/auth/apple' 요청.
-   * req.body 안에 oauthKey, familyName, givenName  담겨서 온다.
    */
   @Post('apple')
   async appleLogin(@Req() req, @Res() res) {
@@ -62,8 +47,6 @@ export class AuthController {
 
   /**
    * KAKAO LOGIN CALL BACK 함수
-   * 클라이언트에서 [POST] 'https://omoolen.loca.lt/auth/kakao' 요청.
-   * req.body 안에 (oauthKey, name) 담겨서 온다.
    */
   @Post('kakao')
   async kakaoLogin(@Req() req, @Res() res) {
