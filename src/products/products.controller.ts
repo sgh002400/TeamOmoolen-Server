@@ -29,8 +29,9 @@ export class ProductsController {
     response.suggestList = suggestProductList;
     response.popularList = popularProductList;
 
-    res.status(200).send({
+    res.json({
       status: 200,
+      success: true,
       message: '상세페이지 조회 성공',
       data: response,
     });

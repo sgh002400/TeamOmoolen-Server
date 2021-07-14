@@ -28,7 +28,7 @@ export class AppController {
   async getPopularItem(@Res() res) {
     try {
       const response = await this.appService.findPopularItem();
-      res.status(200).send({
+      res.json({
         status: 200,
         success: true,
         message: '인기 검색어 조회 성공',
