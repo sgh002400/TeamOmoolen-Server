@@ -24,7 +24,6 @@ export class AppController {
   }
 
   @Get('/searchWindow')
-  @UseGuards(new AuthGuard())
   async getPopularItem(@Res() res) {
     const response = await this.appService.findPopularItem();
     res.status(200).send({
@@ -35,7 +34,6 @@ export class AppController {
   }
 
   @Get('/searchProduct')
-  @UseGuards(new AuthGuard())
   async getSearchProduct(@Query() query, @Res() res) {
     const response = await this.appService.getSearchProduct(query.keyword, query.page, query.sort, query.order);
     res.status(200).send({
@@ -46,7 +44,6 @@ export class AppController {
   }
 
   @Get('/getFilteredList')
-  @UseGuards(new AuthGuard())
   async filteredList(@Body() body: FilterConditionDto, @Query() query, @Res() res) {
     const response = await this.appService.getFilteredList(body, query.page, query.sort, query.order);
     res.status(200).send({

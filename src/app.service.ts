@@ -3,10 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectID, Repository } from 'typeorm';
 import { FilterConditionDto } from './common/dto/filter.condition.dto';
 import { HomeValueDto } from './common/dto/home.value.dto';
-import { saveOnBoardingDataDto } from './common/dto/save.onboarding.data.dto';
-import { SearchQueryStringDto } from './common/dto/search.querystring.dto';
-import { SuitedLensDto } from './common/dto/suitedLens.dto';
-import { WantedLensDto } from './common/dto/wantedLens.dto';
 import { Events } from './entities/Events';
 import { Guides } from './entities/Guides';
 import { Products } from './entities/Products';
@@ -19,16 +15,14 @@ import { GuideHomeDto } from './common/dto/guide.home.dto';
 export class AppService {
   constructor(
     private readonly usersService: UsersService,
-
     @InjectRepository(Products)
     private productsRepository: Repository<Products>,
-
     @InjectRepository(Guides)
     private guidesRepository: Repository<Guides>,
-
     @InjectRepository(Events)
     private eventsRepository: Repository<Events>,
-  ) {}
+  ) {
+  }
 
   //홈
   async findHomeData(id: ObjectID) {
