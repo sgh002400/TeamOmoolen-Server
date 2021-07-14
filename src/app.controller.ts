@@ -26,13 +26,18 @@ export class AppController {
 
   @Get('/searchWindow')
   async getPopularItem(@Res() res) {
-    const response = await this.appService.findPopularItem();
-    res.status(200).send({
-      status: 200,
-      success: true,
-      message: '인기 검색어 조회 성공',
-      data: response,
-    });
+    try {
+      const response = await this.appService.findPopularItem();
+      res.status(200).send({
+        status: 200,
+        success: true,
+        message: '인기 검색어 조회 성공',
+        data: response,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send('Server Error');
+    }
   }
 
   @Get('/searchProduct')
