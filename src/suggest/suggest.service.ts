@@ -184,6 +184,8 @@ export class SuggestService {
     });
 
     const response = {};
+    response['situation'] = findUser.wearTime;
+    response['season'] = 'summer'; //TODO: 현재는 정적으로 구현. 추후에 동적으로 변경 필요!
     response['suggestForYou'] = suggestForYou;
     response['suggestForSituation'] = suggestForSituation;
     response['suggestForNew'] = suggestForNew;
