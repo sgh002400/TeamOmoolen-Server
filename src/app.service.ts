@@ -103,7 +103,7 @@ export class AppService {
 
     const secondGuideList = await this.guidesRepository.find({
       where: {
-        category: '내 눈에 맞는 렌즈, 어떻게 살까?',
+        category: '잘못된 렌즈 상식 TOP 3',
       },
       select: ['id', 'question', 'answer'],
       order: {
@@ -123,9 +123,9 @@ export class AppService {
       take: 3,
     });
 
-    const guide1 = new GuideHomeDto('어쩌고 저쩌고', firstGuideList);
-    const guide2 = new GuideHomeDto('어쩌고 저쩌고', secondGuideList);
-    const guide3 = new GuideHomeDto('어쩌고 저쩌고', thirdGuideList);
+    const guide1 = new GuideHomeDto('내 눈에 맞는 렌즈, 어떻게 살까?', firstGuideList);
+    const guide2 = new GuideHomeDto('잘못된 렌즈 상식 TOP 3', secondGuideList);
+    const guide3 = new GuideHomeDto('렌즈, 어디까지 알고 있니?', thirdGuideList);
 
     return {
       guideList1: guide1,
