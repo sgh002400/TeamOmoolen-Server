@@ -92,7 +92,7 @@ export class AppService {
   async findGuide() {
     const firstGuideList = await this.guidesRepository.find({
       where: {
-        category: '어쩌고 저쩌고',
+        category: '내 눈에 맞는 렌즈, 어떻게 살까?',
       },
       select: ['id', 'question', 'answer'],
       order: {
@@ -103,7 +103,7 @@ export class AppService {
 
     const secondGuideList = await this.guidesRepository.find({
       where: {
-        category: '어쩌고 저쩌고',
+        category: '내 눈에 맞는 렌즈, 어떻게 살까?',
       },
       select: ['id', 'question', 'answer'],
       order: {
@@ -114,7 +114,7 @@ export class AppService {
 
     const thirdGuideList = await this.guidesRepository.find({
       where: {
-        category: '어쩌고 저쩌고',
+        category: '렌즈, 어디까지 알고 있니?',
       },
       select: ['id', 'question', 'answer'],
       order: {
