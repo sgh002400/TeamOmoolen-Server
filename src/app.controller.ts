@@ -18,6 +18,7 @@ export class AppController {
     const response = await this.appService.findHomeData(userId);
     res.status(200).send({
       status: 200,
+      success: true,
       message: '홈 화면 데이터 조회 완료',
       data: response,
     });
@@ -28,6 +29,7 @@ export class AppController {
     const response = await this.appService.findPopularItem();
     res.status(200).send({
       status: 200,
+      success: true,
       message: '인기 검색어 조회 성공',
       data: response,
     });
@@ -38,6 +40,7 @@ export class AppController {
     const response = await this.appService.getSearchProduct(query.keyword, query.page, query.sort, query.order);
     res.status(200).send({
       status: 200,
+      success: true,
       message: '키워드 검색 성공',
       data: response,
     });
@@ -48,6 +51,7 @@ export class AppController {
     const response = await this.appService.getFilteredList(body, query.page, query.sort, query.order);
     res.status(200).send({
       status: 200,
+      success: true,
       message: '필터 검색 성공',
       data: response,
     });
