@@ -64,7 +64,7 @@ export class AppController {
   @Get('/getFilteredList')
   async filteredList(@Body() body: FilterConditionDto, @Query() query, @Res() res) {
     try {
-      const response = await this.appService.getFilteredList(body, query.page, query.sort, query.order, query);
+      const response = await this.appService.getFilteredList(body, query.page, query.sort, query.order);
       res.status(200).send({
         status: 200,
         success: true,
