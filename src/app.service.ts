@@ -399,6 +399,7 @@ export class AppService {
     return {
       items: items,
       totalPage: totalPage,
+      totalCount: totalCount,
     };
   }
 
@@ -441,6 +442,7 @@ export class AppService {
       return {
         items: items,
         totalPage: totalPage,
+        totalCount: totalCount,
       };
     }
 
@@ -501,6 +503,7 @@ export class AppService {
     return {
       items: items,
       totalPage: totalPage,
+      totalCount: totalCount,
     };
   }
 
