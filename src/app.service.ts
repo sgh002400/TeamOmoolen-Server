@@ -32,17 +32,13 @@ export class AppService {
     const season = 'summer';
     const wearTime = findUser.wearTime;
 
-    if (!findUser.gender) {
-      const recommendationByUser =
-        await this.findRecommendationByUserOnBoardingData(findUser);
+    if (findUser.gender != null) {
+      const recommendationByUser = await this.findRecommendationByUserOnBoardingData(findUser);
       const guides = await this.findGuide();
-      const recommendationBySeason = await this.findRecommendationBySeason(
-        season,
-      );
+      const recommendationBySeason = await this.findRecommendationBySeason(season);
       const deadlineEvent = await this.findDeadlineEvents();
       const newLens = await this.findNewLens();
-      const recommendationBySituation =
-        await this.findRecommendationBySituationOnBoardingData(findUser);
+      const recommendationBySituation = await this.findRecommendationBySituationOnBoardingData(findUser);
       const lastestEvent = await this.findLatestEvent();
 
       const homeValues = new HomeValueDto();
@@ -92,11 +88,11 @@ export class AppService {
   async findGuide() {
     const firstGuideList = await this.guidesRepository.find({
       where: {
-        category: '내 눈에 맞는 렌즈, 어떻게 살까?',
+        category: '나에게 맞는 렌즈, 어떻게 사?',
       },
       select: ['id', 'question', 'answer'],
       order: {
-        createAt: 'DESC',
+        createAt: "DESC",
       },
       take: 3,
     });
@@ -107,7 +103,7 @@ export class AppService {
       },
       select: ['id', 'question', 'answer'],
       order: {
-        createAt: 'DESC',
+        createAt: "DESC",
       },
       take: 3,
     });
@@ -118,12 +114,12 @@ export class AppService {
       },
       select: ['id', 'question', 'answer'],
       order: {
-        createAt: 'DESC',
+        createAt: "DESC",
       },
       take: 3,
     });
 
-    const guide1 = new GuideHomeDto('내 눈에 맞는 렌즈, 어떻게 살까?', firstGuideList);
+    const guide1 = new GuideHomeDto('나에게 맞는 렌즈, 어떻게 사?', firstGuideList);
     const guide2 = new GuideHomeDto('잘못된 렌즈 상식 TOP 3', secondGuideList);
     const guide3 = new GuideHomeDto('렌즈, 어디까지 알고 있니?', thirdGuideList);
 
@@ -219,11 +215,15 @@ export class AppService {
 
   //마감이 얼마 남지 않은 이벤트 목록을 가져옴
   async findDeadlineEvents() {
-    return this.eventsRepository.find({
+    return await this.eventsRepository.find({
       order: {
-        endDate: 'ASC',
+        endDate: "ASC",
       },
       take: 3,
+      select: [
+        'id',
+        'image'
+      ]
     });
   }
 
@@ -330,6 +330,7 @@ export class AppService {
           'price',
           'otherColorList',
         ],
+        take: 6,
       });
     } else if (user.wearTime == '여행') {
       return this.productsRepository.find({
@@ -348,6 +349,7 @@ export class AppService {
           'price',
           'otherColorList',
         ],
+        take: 6,
       });
     } else {
       throw new HttpException('잘못된 상황 입력입니다.', 404);
@@ -358,9 +360,13 @@ export class AppService {
   async findLatestEvent() {
     return this.eventsRepository.find({
       order: {
-        startDate: 'DESC',
+        startDate: "DESC",
       },
       take: 3,
+      select: [
+        'id',
+        'image'
+      ]
     });
   }
 
