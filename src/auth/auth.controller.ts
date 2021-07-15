@@ -7,10 +7,7 @@ const fs = require('fs');
 const AppleAuth = require('apple-auth');
 const bodyParser = require('body-parser');
 
-const auth = new AppleAuth(
-  appleAuthConfig,
-  'https://omoolen-bucket.s3.ap-northeast-2.amazonaws.com/config/AuthKey_CY92UWQ3F3.p8',
-);
+const auth = new AppleAuth(appleAuthConfig, 'src/config/AuthKey_CY92UWQ3F3.p8');
 
 @Controller('/api/auth')
 export class AuthController {
