@@ -259,14 +259,10 @@ export class AppService {
       take: 4,
     });
 
-    const newLensBrand1 = new newLensBrandDto('오렌즈', newLensProducts1);
-    const newLensBrand2 = new newLensBrandDto('렌즈미', newLensProducts2);
-    const newLensBrand3 = new newLensBrandDto('렌즈베리', newLensProducts3);
-
     return {
-      newLensBrand1: newLensBrand1,
-      newLensBrand2: newLensBrand2,
-      newLensBrand3: newLensBrand3,
+      newLensBrand1: newLensProducts1,
+      newLensBrand2: newLensProducts2,
+      newLensBrand3: newLensProducts3,
     };
   }
 
