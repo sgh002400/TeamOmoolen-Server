@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Body, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, Res, UseGuards, HttpException } from '@nestjs/common';
 import { AppService } from './app.service';
 import { User } from './common/decorators/user.decorator';
 import { FilterConditionDto } from './common/dto/filter.condition.dto';
@@ -14,21 +14,26 @@ export class AppController {
   @Get('/home')
   @UseGuards(new AuthGuard())
   async getHomeData(@User() user, @Res() res) {
-    const userId = ObjectId(user.userId);
-    const response = await this.appService.findHomeData(userId);
-    res.status(200).send({
-      status: 200,
-      success: true,
-      message: '홈 화면 데이터 조회 완료',
-      data: response,
-    });
+    try {
+      const userId = ObjectId(user.userId);
+      const response = await this.appService.findHomeData(userId);
+      res.status(200).send({
+        status: 200,
+        success: true,
+        message: '홈 화면 데이터 조회 완료',
+        data: response,
+      });
+    } catch (err) {
+      console.log(err);
+      throw new HttpException('홈 화면 데이터 조회 실패', 500);
+    }
   }
 
   @Get('/searchWindow')
   async getPopularItem(@Res() res) {
     try {
       const response = await this.appService.findPopularItem();
-      res.json({
+      res.status(200).send({
         status: 200,
         success: true,
         message: '인기 검색어 조회 성공',
@@ -36,29 +41,39 @@ export class AppController {
       });
     } catch (err) {
       console.log(err);
-      res.status(500).send('Server Error');
+      throw new HttpException('인기 검색어 조회 실패', 500);
     }
   }
 
   @Get('/searchProduct')
   async getSearchProduct(@Query() query, @Res() res) {
-    const response = await this.appService.getSearchProduct(query.keyword, query.page, query.sort, query.order);
-    res.status(200).send({
-      status: 200,
-      success: true,
-      message: '키워드 검색 성공',
-      data: response,
-    });
+    try {
+      const response = await this.appService.getSearchProduct(query.keyword, query.page, query.sort, query.order);
+      res.status(200).send({
+        status: 200,
+        success: true,
+        message: '키워드 검색 성공',
+        data: response,
+      });
+    } catch (err) {
+      console.log(err);
+      throw new HttpException('키워드 검색 실패', 500);
+    }
   }
 
   @Get('/getFilteredList')
   async filteredList(@Body() body: FilterConditionDto, @Query() query, @Res() res) {
-    const response = await this.appService.getFilteredList(body, query.page, query.sort, query.order);
-    res.status(200).send({
-      status: 200,
-      success: true,
-      message: '필터 검색 성공',
-      data: response,
-    });
+    try {
+      const response = await this.appService.getFilteredList(body, query.page, query.sort, query.order);
+      res.status(200).send({
+        status: 200,
+        success: true,
+        message: '필터 검색 성공',
+        data: response,
+      });
+    } catch (err) {
+      console.log(err);
+      throw new HttpException('필터 검색 실패', 500);
+    }
   }
 }
