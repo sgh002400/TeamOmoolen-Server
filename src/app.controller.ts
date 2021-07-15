@@ -61,7 +61,7 @@ export class AppController {
     }
   }
 
-  @Get('/getFilteredList')
+  @Post('/getFilteredList')
   async filteredList(@Body() body: FilterConditionDto, @Query() query, @Res() res) {
     try {
       const response = await this.appService.getFilteredList(body, query.page, query.sort, query.order);
