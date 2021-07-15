@@ -1,13 +1,20 @@
 import { Query, Req } from '@nestjs/common';
 import { Controller, Get, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { appleAuthConfig } from '../config/authConfig';
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const AppleAuth = require('apple-auth');
 const bodyParser = require('body-parser');
 
-const auth = new AppleAuth(appleAuthConfig, 'src/config/AuthKey_CY92UWQ3F3.p8');
+const config = {
+  client_id: 'com.Omoolen.service',
+  team_id: '4QG3GC35LA',
+  redirect_uri: 'https://www.omoolen.shop/api/auth/apple',
+  key_id: 'CY92UWQ3F3',
+  scope: 'name email',
+};
+
+const auth = new AppleAuth(config, 'src/config/AuthKey_CY92UWQ3F3.p8');
 
 @Controller('/api/auth')
 export class AuthController {
