@@ -218,7 +218,7 @@ export class SuggestService {
         [sort]: order === 'desc' ? 'DESC' : 'ASC',
         name: 'DESC',
       },
-      skip: (page - 8) * 8,
+      skip: (page - 1) * 8,
       take: 8,
     });
 
@@ -259,7 +259,7 @@ export class SuggestService {
             [sort]: order === 'desc' ? 'DESC' : 'ASC',
             name: 'DESC',
           },
-          skip: (page - 8) * 8,
+          skip: (page - 1) * 8,
           take: 8,
         });
 
@@ -295,7 +295,7 @@ export class SuggestService {
           order: {
             name: 'DESC',
           },
-          skip: (page - 8) * 8,
+          skip: (page - 1) * 8,
           take: 8,
         });
 
@@ -331,7 +331,7 @@ export class SuggestService {
           order: {
             name: 'DESC',
           },
-          skip: (page - 8) * 8,
+          skip: (page - 1) * 8,
           take: 8,
         });
 
@@ -367,7 +367,7 @@ export class SuggestService {
           order: {
             name: 'DESC',
           },
-          skip: (page - 8) * 8,
+          skip: (page - 1) * 8,
           take: 8,
         });
 
@@ -409,7 +409,7 @@ export class SuggestService {
         [sort]: order === 'desc' ? 'DESC' : 'ASC',
         releaseDate: 'DESC',
       },
-      skip: (page - 8) * 8,
+      skip: (page - 1) * 8,
       take: 8,
     });
 
@@ -445,7 +445,7 @@ export class SuggestService {
         [sort]: order === 'desc' ? 'DESC' : 'ASC',
         name: 'DESC',
       },
-      skip: (page - 8) * 8,
+      skip: (page - 1) * 8,
       take: 8,
     });
 
