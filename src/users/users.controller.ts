@@ -1,7 +1,8 @@
-import { Body, Controller, ForbiddenException, HttpException, Post, Res } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, HttpException, Post, Res, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { saveOnBoardingDataDto } from '../common/dto/save.onboarding.data.dto';
 import { User } from '../common/decorators/user.decorator';
+import AuthGuard from '../middlewares/auth.middleware';
 const ObjectId = require('mongodb').ObjectID;
 
 @Controller('/api/users')
@@ -9,6 +10,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/saveOnBoardingData')
+  @UseGuards(new AuthGuard())
   async saveOnBoardingData(@Res() res, @Body() body: saveOnBoardingDataDto, @User() user) {
     try {
       const userId = ObjectId(user.userId);
