@@ -411,14 +411,15 @@ export class AppService {
     page: number,
     sort: string,
     order: string,
+    query: any,
   ) {
     // 필터검색에서 직경을 선택하지 않았을 경우, 전체 선택과 같은 결과가 나와야 하기 때문에 -1로 설정
     if (body.diameter == -1) {
       const [items, totalCount] = await this.productsRepository.findAndCount({
         where: {
-          brand: { $in: body.brand },
-          color: { $in: body.color },
-          changeCycleRange: { $in: body.changeCycleRange },
+          brand: { $in: query.brand },
+          color: { $in: query.color },
+          changeCycleRange: { $in: query.changeCycleRange },
         },
         select: [
           'id',
