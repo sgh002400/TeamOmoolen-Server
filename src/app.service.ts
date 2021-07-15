@@ -387,7 +387,7 @@ export class AppService {
         'price',
         'otherColorList',
       ],
-      skip: (page - 12) * 12,
+      skip: (page - 1) * 12,
       take: 12,
     });
 
@@ -399,6 +399,7 @@ export class AppService {
     return {
       items: items,
       totalPage: totalPage,
+      totalCount: totalCount,
     };
   }
 
@@ -429,7 +430,7 @@ export class AppService {
           'price',
           'otherColorList',
         ],
-        skip: (page - 12) * 12,
+        skip: (page - 1) * 12,
         take: 12,
       });
 
@@ -441,6 +442,7 @@ export class AppService {
       return {
         items: items,
         totalPage: totalPage,
+        totalCount: totalCount,
       };
     }
 
@@ -489,7 +491,7 @@ export class AppService {
         'price',
         'otherColorList',
       ],
-      skip: (page - 12) * 12,
+      skip: (page - 1) * 12,
       take: 12,
     });
 
@@ -501,6 +503,7 @@ export class AppService {
     return {
       items: items,
       totalPage: totalPage,
+      totalCount: totalCount,
     };
   }
 
