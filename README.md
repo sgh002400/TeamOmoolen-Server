@@ -70,7 +70,7 @@
   }
 ```
 ### 📒 API Specification
-[Omoolen WIKI](https://github.com/TeamOmoolen/TeamOmoolen-Server/wiki/API-%EB%AA%85%EC%84%B8%EC%84%9C)
+[Omoolen WIKI](https://github.com/TeamOmoolen/TeamOmoolen-Server/wiki/Omoolen-API-Specification)
 
 ### 📌 Convention
 
