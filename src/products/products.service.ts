@@ -49,6 +49,7 @@ export class ProductsService {
 
     return await this.productsRepository.find({
       where: {
+        _id: { $ne: findItem.id },
         brand: findItem.brand,
         color: findItem.color,
         diameter: findItem.diameter,
