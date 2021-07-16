@@ -64,6 +64,7 @@ export class SuggestService {
           },
           take: 8,
         });
+        break;
       case '특별':
         suggestForSituation = await this.productsRepository.find({
           where: {
@@ -87,6 +88,7 @@ export class SuggestService {
           },
           take: 8,
         });
+        break;
       case '운동':
         suggestForSituation = await this.productsRepository.find({
           where: {
@@ -110,6 +112,7 @@ export class SuggestService {
           },
           take: 8,
         });
+        break;
       case '여행':
         suggestForSituation = await this.productsRepository.find({
           where: {
@@ -133,6 +136,7 @@ export class SuggestService {
           },
           take: 8,
         });
+        break;
     }
 
     const now = new Date();
