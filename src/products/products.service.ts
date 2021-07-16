@@ -46,9 +46,11 @@ export class ProductsService {
     const findItem = await this.productsRepository.findOne({
       where: { _id: id },
     });
+    console.log(findItem.id)
 
     return await this.productsRepository.find({
       where: {
+        _id: { $ne: findItem.id },
         brand: findItem.brand,
         color: findItem.color,
         diameter: findItem.diameter,
