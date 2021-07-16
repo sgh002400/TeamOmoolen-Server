@@ -3,6 +3,7 @@ import { Products } from '../entities/Products';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, LessThan, ObjectID, Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
+import { suggestResponseDto } from '../common/dto/suggest.response.dto';
 
 @Injectable()
 export class SuggestService {
@@ -15,185 +16,207 @@ export class SuggestService {
   async findSuggestProduct(id: ObjectID) {
     const findUser = await this.usersService.findUserById(id);
 
-    const suggestForYou = await this.productsRepository.find({
-      where: {
-        color: { $in: findUser.wantedLens.color },
-        function: findUser.wantedLens.function,
-        changeCycleRange: { $in: findUser.wantedLens.changeCycleRange },
-      },
-      select: [
-        'id',
-        'imageList',
-        'brand',
-        'name',
-        'diameter',
-        'changeCycleMinimum',
-        'changeCycleMaximum',
-        'pieces',
-        'price',
-        'otherColorList',
-      ],
-      order: {
-        name: 'DESC',
-      },
-      take: 8,
-    });
+    const [suggestForYou, suggestForYouTotalCount] = await this.productsRepository.findAndCount({
+        where: {
+          color: { $in: findUser.wantedLens.color },
+          function: findUser.wantedLens.function,
+          changeCycleRange: { $in: findUser.wantedLens.changeCycleRange },
+        },
+        select: [
+          'id',
+          'imageList',
+          'brand',
+          'name',
+          'diameter',
+          'changeCycleMinimum',
+          'changeCycleMaximum',
+          'pieces',
+          'price',
+          'otherColorList',
+        ],
+        order: {
+          name: 'DESC',
+        },
+        take: 8,
+      });
+    let suggestForYouTotalPage = parseInt(String(suggestForYouTotalCount / 8));
+    if (suggestForYouTotalCount % 8 != 0) {
+      suggestForYouTotalPage++;
+    }
 
     let suggestForSituation;
+    let suggestForSituationTotalCount;
     switch (findUser.wearTime) {
       case '일상':
-        suggestForSituation = await this.productsRepository.find({
-          where: {
-            diameter: { $lte: 13.4 },
-            color: { $in: ['brown', 'choco'] },
-          },
-          select: [
-            'id',
-            'imageList',
-            'brand',
-            'name',
-            'diameter',
-            'changeCycleMinimum',
-            'changeCycleMaximum',
-            'pieces',
-            'price',
-            'otherColorList',
-          ],
-          order: {
-            name: 'DESC',
-          },
-          take: 8,
-        });
+        [suggestForSituation, suggestForSituationTotalCount] = await this.productsRepository.findAndCount({
+            where: {
+              diameter: { $lte: 13.4 },
+              color: { $in: ['brown', 'choco'] },
+            },
+            select: [
+              'id',
+              'imageList',
+              'brand',
+              'name',
+              'diameter',
+              'changeCycleMinimum',
+              'changeCycleMaximum',
+              'pieces',
+              'price',
+              'otherColorList',
+            ],
+            order: {
+              name: 'DESC',
+            },
+            take: 8,
+          });
         break;
       case '특별':
-        suggestForSituation = await this.productsRepository.find({
-          where: {
-            diameter: { $lt: 13.9 },
-            color: { $in: ['grey', 'purple', 'pink', 'blue', 'green'] },
-          },
-          select: [
-            'id',
-            'imageList',
-            'brand',
-            'name',
-            'diameter',
-            'changeCycleMinimum',
-            'changeCycleMaximum',
-            'pieces',
-            'price',
-            'otherColorList',
-          ],
-          order: {
-            name: 'DESC',
-          },
-          take: 8,
-        });
+        [suggestForSituation, suggestForSituationTotalCount] = await this.productsRepository.findAndCount({
+            where: {
+              diameter: { $lt: 13.9 },
+              color: { $in: ['grey', 'purple', 'pink', 'blue', 'green'] },
+            },
+            select: [
+              'id',
+              'imageList',
+              'brand',
+              'name',
+              'diameter',
+              'changeCycleMinimum',
+              'changeCycleMaximum',
+              'pieces',
+              'price',
+              'otherColorList',
+            ],
+            order: {
+              name: 'DESC',
+            },
+            take: 8,
+          });
         break;
       case '운동':
-        suggestForSituation = await this.productsRepository.find({
-          where: {
-            category: '투명',
-            price: { $lt: 20000 },
-          },
-          select: [
-            'id',
-            'imageList',
-            'brand',
-            'name',
-            'diameter',
-            'changeCycleMinimum',
-            'changeCycleMaximum',
-            'pieces',
-            'price',
-            'otherColorList',
-          ],
-          order: {
-            name: 'DESC',
-          },
-          take: 8,
-        });
+        [suggestForSituation, suggestForSituationTotalCount] = await this.productsRepository.findAndCount({
+            where: {
+              category: '투명',
+              price: { $lt: 20000 },
+            },
+            select: [
+              'id',
+              'imageList',
+              'brand',
+              'name',
+              'diameter',
+              'changeCycleMinimum',
+              'changeCycleMaximum',
+              'pieces',
+              'price',
+              'otherColorList',
+            ],
+            order: {
+              name: 'DESC',
+            },
+            take: 8,
+          });
         break;
       case '여행':
-        suggestForSituation = await this.productsRepository.find({
-          where: {
-            color: { $in: findUser.wantedLens.color },
-            changeCycle: 1,
-          },
-          select: [
-            'id',
-            'imageList',
-            'brand',
-            'name',
-            'diameter',
-            'changeCycleMinimum',
-            'changeCycleMaximum',
-            'pieces',
-            'price',
-            'otherColorList',
-          ],
-          order: {
-            name: 'DESC',
-          },
-          take: 8,
-        });
+        [suggestForSituation, suggestForSituationTotalCount] = await this.productsRepository.findAndCount({
+            where: {
+              color: { $in: findUser.wantedLens.color },
+              changeCycle: 1,
+            },
+            select: [
+              'id',
+              'imageList',
+              'brand',
+              'name',
+              'diameter',
+              'changeCycleMinimum',
+              'changeCycleMaximum',
+              'pieces',
+              'price',
+              'otherColorList',
+            ],
+            order: {
+              name: 'DESC',
+            },
+            take: 8,
+          });
         break;
+    }
+    let suggestForSituationTotalPage = parseInt(String(suggestForSituationTotalCount / 8));
+    if (suggestForYouTotalCount % 8 != 0) {
+      suggestForSituationTotalPage++;
     }
 
     const now = new Date();
     const threeMonthAgo = new Date(now.setMonth(now.getMonth() - 3));
 
-    const suggestForNew = await this.productsRepository.find({
-      where: {
-        releaseDate: { $gte: threeMonthAgo },
-      },
-      select: [
-        'id',
-        'imageList',
-        'brand',
-        'name',
-        'diameter',
-        'changeCycleMinimum',
-        'changeCycleMaximum',
-        'pieces',
-        'price',
-        'otherColorList',
-      ],
-      order: {
-        name: 'DESC',
-      },
-      take: 8,
-    });
+    const [suggestForNew, suggestForNewTotalCount] = await this.productsRepository.findAndCount({
+        where: {
+          releaseDate: { $gte: threeMonthAgo },
+        },
+        select: [
+          'id',
+          'imageList',
+          'brand',
+          'name',
+          'diameter',
+          'changeCycleMinimum',
+          'changeCycleMaximum',
+          'pieces',
+          'price',
+          'otherColorList',
+        ],
+        order: {
+          name: 'DESC',
+        },
+        take: 8,
+      });
+    let suggestForNewTotalPage = parseInt(String(suggestForNewTotalCount / 8));
+    if (suggestForYouTotalCount % 8 != 0) {
+      suggestForNewTotalPage++;
+    }
 
     //TODO: 현재 여름만 정적으로 구현. 이후 계절별 분기 필요
-    const suggestForSeason = await this.productsRepository.find({
-      where: {
-        color: 'blue',
-      },
-      select: [
-        'id',
-        'imageList',
-        'brand',
-        'name',
-        'diameter',
-        'changeCycleMinimum',
-        'changeCycleMaximum',
-        'pieces',
-        'price',
-        'otherColorList',
-      ],
-      order: {
-        name: 'DESC',
-      },
-      take: 8,
-    });
+    const [suggestForSeason, suggestForSeasonTotalCount] = await this.productsRepository.findAndCount({
+        where: {
+          color: 'blue',
+        },
+        select: [
+          'id',
+          'imageList',
+          'brand',
+          'name',
+          'diameter',
+          'changeCycleMinimum',
+          'changeCycleMaximum',
+          'pieces',
+          'price',
+          'otherColorList',
+        ],
+        order: {
+          name: 'DESC',
+        },
+        take: 8,
+      });
+    let suggestForSeasonTotalPage = parseInt(String(suggestForSeasonTotalCount / 8));
+    if (suggestForYouTotalCount % 8 != 0) {
+      suggestForSeasonTotalPage++;
+    }
 
-    const response = {};
-    response['situation'] = findUser.wearTime;
-    response['season'] = 'summer'; //TODO: 현재는 정적으로 구현. 추후에 동적으로 변경 필요!
-    response['suggestForYou'] = suggestForYou;
-    response['suggestForSituation'] = suggestForSituation;
-    response['suggestForNew'] = suggestForNew;
-    response['suggestForSeason'] = suggestForSeason;
+    const response = new suggestResponseDto(
+      findUser.wearTime,
+      'summer',
+      suggestForYouTotalPage,
+      suggestForSituationTotalPage,
+      suggestForNewTotalPage,
+      suggestForSeasonTotalPage,
+      suggestForYou,
+      suggestForSituation,
+      suggestForNew,
+      suggestForSeason,
+    );
 
     return response;
   }
