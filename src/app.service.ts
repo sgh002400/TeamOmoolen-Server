@@ -389,6 +389,9 @@ export class AppService {
         'price',
         'otherColorList',
       ],
+      order: {
+        [sort]: order === 'desc' ? 'DESC' : 'ASC',
+      },
       skip: (page - 1) * 12,
       take: 12,
     });
@@ -433,6 +436,9 @@ export class AppService {
           'price',
           'otherColorList',
         ],
+        order: {
+          [sort]: order === 'desc' ? 'DESC' : 'ASC',
+        },
         skip: (page - 1) * 12,
         take: 12,
       });
