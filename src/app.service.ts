@@ -252,7 +252,7 @@ export class AppService {
 
     const newLensProducts3 = await this.productsRepository.find({
       where: {
-        brand: '렌즈베리',
+        brand: '아큐브',
         releaseDate: { $gte: threeMonthAgo },
       },
       select: ['id', 'imageList', 'brand', 'name', 'price'],
