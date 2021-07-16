@@ -80,6 +80,6 @@
 
 ### 🧑🏻‍💻 Developers
 |안준영|신지환|
-|------|---|
+|:------:|:---:|
 |<img src="https://user-images.githubusercontent.com/67837091/125966887-ca0eded3-ea42-44ce-af79-3dd8f6f0386f.jpg" width="200px" />|<img src="https://user-images.githubusercontent.com/67837091/125966982-9568ece4-2e11-4947-a845-00b874a7b81e.jpg" width="200px"/>|
 |[anzun0](https://github.com/anzun0)|[sgh002400](https://github.com/sgh002400)|
